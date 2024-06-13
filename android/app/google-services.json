@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "98977359608",
+    "project_id": "jevlis-ka-part2",
+    "storage_bucket": "jevlis-ka-part2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:98977359608:android:8f9e64a5e3101f66f6bd0d",
+        "android_client_info": {
+          "package_name": "com.jevliska.jevlis_ka"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxuJnvMhzwDWR9QfCTpnMMbjwaJJ0-jLw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
