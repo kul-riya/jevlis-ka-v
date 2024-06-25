@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class RegisterLoginButton extends StatelessWidget {
-  const RegisterLoginButton(
-      {super.key, required this.text, required this.onPressed});
+  RegisterLoginButton({super.key, required this.text, required this.onPressed});
 
   final String text;
-  final VoidCallback onPressed;
+  VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {

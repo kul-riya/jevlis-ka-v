@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:jevlis_ka/utilities/register_login_button.dart';
-import 'package:jevlis_ka/utilities/register_text_field.dart';
+import 'package:jevlis_ka/auth/auth_service.dart';
+import 'package:jevlis_ka/utilities/registration_screens/register_login_button.dart';
+import 'package:jevlis_ka/utilities/registration_screens/register_text_field.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -62,7 +63,15 @@ class _LoginViewState extends State<LoginView> {
                   hintText: "Password",
                   obscureText: true,
                   controller: _passwordController),
-              RegisterLoginButton(text: "Continue", onPressed: () {}),
+              RegisterLoginButton(
+                text: "Continue",
+                onPressed: () async {
+                  final email = _emailController.text;
+                  final password = _passwordController.text;
+                  await FirebaseAuthService.firebase()
+                      .userLogIn(email: email, password: password);
+                },
+              ),
               const Padding(padding: EdgeInsets.all(10.0), child: Text("Or")),
               RegisterLoginButton(
                   text: "Sign In with Google", onPressed: () {}),
