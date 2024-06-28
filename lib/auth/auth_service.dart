@@ -2,13 +2,13 @@ import 'package:jevlis_ka/auth/auth_provider.dart';
 import 'package:jevlis_ka/auth/auth_user.dart';
 import 'package:jevlis_ka/auth/firebase_auth_provider.dart';
 
-class FirebaseAuthService implements AuthProvider {
+class AuthService implements AuthProvider {
   final AuthProvider provider;
 
-  FirebaseAuthService(this.provider);
+  AuthService(this.provider);
 
-  factory FirebaseAuthService.firebase() {
-    return FirebaseAuthService(FirebaseAuthProvider());
+  factory AuthService.firebase() {
+    return AuthService(FirebaseAuthProvider());
   }
 
   @override
@@ -36,5 +36,10 @@ class FirebaseAuthService implements AuthProvider {
   @override
   Future<void> userLogOut() async {
     provider.userLogOut();
+  }
+
+  @override
+  Future<AuthUser> signInWithGoogle() async {
+    return provider.signInWithGoogle();
   }
 }

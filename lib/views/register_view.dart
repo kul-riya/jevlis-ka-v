@@ -68,17 +68,26 @@ class _RegisterViewState extends State<RegisterView> {
                 onPressed: () async {
                   final email = _emailController.text;
                   final password = _passwordController.text;
-                  await FirebaseAuthService.firebase()
+                  await AuthService.firebase()
                       .createUser(email: email, password: password);
                 },
               ),
               const Padding(padding: EdgeInsets.all(10.0), child: Text("Or")),
               RegisterLoginButton(
-                  text: "Sign Up with Google", onPressed: () {}),
+                  text: "Sign Up with Google",
+                  onPressed: () {
+                    AuthService.firebase().signInWithGoogle();
+                  }),
               const Padding(
                   padding: EdgeInsets.only(top: 20.0, bottom: 7.0),
                   child: Text("Already Registered?")),
-              RegisterLoginButton(text: "Login", onPressed: () {})
+              RegisterLoginButton(
+                text: "Login",
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/login_view/', (route) => false);
+                },
+              )
             ],
           ),
         ),

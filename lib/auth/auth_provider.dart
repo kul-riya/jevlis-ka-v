@@ -16,4 +16,6 @@ abstract class AuthProvider {
   AuthUser? get currentUser;
 
   Future<void> userLogOut();
+
+  Future<AuthUser> signInWithGoogle();
 }

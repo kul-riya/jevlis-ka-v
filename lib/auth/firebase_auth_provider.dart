@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart'
-    show FirebaseAuth, FirebaseAuthException;
+    show FirebaseAuth, FirebaseAuthException, GoogleAuthProvider;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:jevlis_ka/auth/auth_exceptions.dart';
 import 'package:jevlis_ka/auth/auth_provider.dart';
@@ -21,8 +21,16 @@ class FirebaseAuthProvider implements AuthProvider {
         throw UserNotLoggedInAuthException();
       }
     } on FirebaseAuthException catch (e) {
-      print(e);
-      throw GenericAuthException();
+      switch (e.code) {
+        case 'invalid-email':
+          throw InvalidEmailAuthException();
+        case 'weak-password':
+          throw WeakPasswordAuthException();
+        case 'email-already-in-use':
+          throw EmailAlreadyInUseAuthException();
+        default:
+          throw GenericAuthException();
+      }
     }
   }
 
@@ -56,8 +64,14 @@ class FirebaseAuthProvider implements AuthProvider {
         throw UserNotLoggedInAuthException();
       }
     } on FirebaseAuthException catch (e) {
-      print(e.code);
-      throw GenericAuthException();
+      switch (e.code) {
+        case 'invalid-credentials':
+          throw WrongPasswordAuthException();
+        case 'user-not-found':
+          throw UserNotFoundAuthException();
+        default:
+          throw GenericAuthException();
+      }
     }
   }
 
@@ -68,6 +82,23 @@ class FirebaseAuthProvider implements AuthProvider {
       return AuthUser.fromFirebase(user);
     } else {
       return null;
+    }
+  }
+
+  @override
+  Future<AuthUser> signInWithGoogle() async {
+    try {
+      final provider = GoogleAuthProvider();
+      provider.setCustomParameters({'prompt': 'select_account'});
+      await FirebaseAuth.instance.signInWithPopup(provider);
+      final user = currentUser;
+      if (user != null) {
+        return user;
+      } else {
+        throw UserNotLoggedInAuthException();
+      }
+    } on FirebaseAuthException catch (_) {
+      throw GenericAuthException();
     }
   }
 }

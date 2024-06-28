@@ -1,4 +1,7 @@
+// ignore_for_file: avoid_print, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+// import 'package:jevlis_ka/auth/auth_exceptions.dart';
 import 'package:jevlis_ka/auth/auth_service.dart';
 import 'package:jevlis_ka/utilities/registration_screens/register_login_button.dart';
 import 'package:jevlis_ka/utilities/registration_screens/register_text_field.dart';
@@ -18,6 +21,7 @@ class _LoginViewState extends State<LoginView> {
   void initState() {
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
+    // FirebaseAuthService.firebase().userLogOut();
     super.initState();
   }
 
@@ -68,17 +72,33 @@ class _LoginViewState extends State<LoginView> {
                 onPressed: () async {
                   final email = _emailController.text;
                   final password = _passwordController.text;
-                  await FirebaseAuthService.firebase()
+                  final user = await AuthService.firebase()
                       .userLogIn(email: email, password: password);
+                  print(user);
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/order/canteen_view/', (route) => false);
                 },
               ),
               const Padding(padding: EdgeInsets.all(10.0), child: Text("Or")),
               RegisterLoginButton(
-                  text: "Sign In with Google", onPressed: () {}),
+                  text: "Sign In with Google",
+                  onPressed: () async {
+                    final user =
+                        await AuthService.firebase().signInWithGoogle();
+                    print(user);
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/order/canteen_view/', (route) => false);
+                  }),
               const Padding(
                   padding: EdgeInsets.only(top: 20.0, bottom: 7.0),
                   child: Text("Not Registered Yet?")),
-              RegisterLoginButton(text: "Register Now", onPressed: () {})
+              RegisterLoginButton(
+                text: "Register Now",
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/register_view/', (route) => false);
+                },
+              )
             ],
           ),
         ),
