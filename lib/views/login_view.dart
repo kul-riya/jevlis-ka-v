@@ -1,8 +1,8 @@
-// ignore_for_file: avoid_print, use_build_context_synchronously
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jevlis_ka/auth/bloc/auth_bloc.dart';
+import 'package:jevlis_ka/auth/bloc/auth_event.dart';
 // import 'package:jevlis_ka/auth/auth_exceptions.dart';
-import 'package:jevlis_ka/auth/auth_service.dart';
 import 'package:jevlis_ka/utilities/registration_screens/register_login_button.dart';
 import 'package:jevlis_ka/utilities/registration_screens/register_text_field.dart';
 
@@ -21,7 +21,6 @@ class _LoginViewState extends State<LoginView> {
   void initState() {
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
-    // FirebaseAuthService.firebase().userLogOut();
     super.initState();
   }
 
@@ -34,6 +33,7 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Add exception handling using bloclistener
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -72,22 +72,15 @@ class _LoginViewState extends State<LoginView> {
                 onPressed: () async {
                   final email = _emailController.text;
                   final password = _passwordController.text;
-                  final user = await AuthService.firebase()
-                      .userLogIn(email: email, password: password);
-                  print(user);
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                      '/order/canteen_view/', (route) => false);
+                  context.read<AuthBloc>().add(AuthEventEmailLoginUser(
+                      email: email, password: password));
                 },
               ),
               const Padding(padding: EdgeInsets.all(10.0), child: Text("Or")),
               RegisterLoginButton(
                   text: "Sign In with Google",
                   onPressed: () async {
-                    final user =
-                        await AuthService.firebase().signInWithGoogle();
-                    print(user);
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/order/canteen_view/', (route) => false);
+                    context.read<AuthBloc>().add(AuthEventGoogleLoginUser());
                   }),
               const Padding(
                   padding: EdgeInsets.only(top: 20.0, bottom: 7.0),
@@ -95,8 +88,7 @@ class _LoginViewState extends State<LoginView> {
               RegisterLoginButton(
                 text: "Register Now",
                 onPressed: () {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                      '/register_view/', (route) => false);
+                  context.read<AuthBloc>().add(AuthEventShouldRegister());
                 },
               )
             ],

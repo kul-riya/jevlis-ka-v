@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:jevlis_ka/auth/auth_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jevlis_ka/auth/bloc/auth_bloc.dart';
+import 'package:jevlis_ka/auth/bloc/auth_event.dart';
 import 'package:jevlis_ka/utilities/registration_screens/register_login_button.dart';
 import 'package:jevlis_ka/utilities/registration_screens/register_text_field.dart';
 
@@ -30,6 +32,7 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Add exception handling using bloclistener
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -68,15 +71,16 @@ class _RegisterViewState extends State<RegisterView> {
                 onPressed: () async {
                   final email = _emailController.text;
                   final password = _passwordController.text;
-                  await AuthService.firebase()
-                      .createUser(email: email, password: password);
+                  context
+                      .read<AuthBloc>()
+                      .add(AuthEventRegister(email: email, password: password));
                 },
               ),
               const Padding(padding: EdgeInsets.all(10.0), child: Text("Or")),
               RegisterLoginButton(
                   text: "Sign Up with Google",
                   onPressed: () {
-                    AuthService.firebase().signInWithGoogle();
+                    context.read<AuthBloc>().add(AuthEventGoogleLoginUser());
                   }),
               const Padding(
                   padding: EdgeInsets.only(top: 20.0, bottom: 7.0),
@@ -84,8 +88,7 @@ class _RegisterViewState extends State<RegisterView> {
               RegisterLoginButton(
                 text: "Login",
                 onPressed: () {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                      '/login_view/', (route) => false);
+                  context.read<AuthBloc>().add(AuthEventLogOut());
                 },
               )
             ],
