@@ -10,6 +10,10 @@ class CanteenMenuView extends StatefulWidget {
 class _CanteenMenuViewState extends State<CanteenMenuView> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const Scaffold(
+      body: Center(
+        child: Text("Canteen menu screen"),
+      ),
+    );
   }
 }

@@ -5,32 +5,26 @@ import 'package:jevlis_ka/auth/bloc/auth_event.dart';
 import 'package:jevlis_ka/auth/bloc/auth_state.dart';
 import 'package:jevlis_ka/auth/firebase_auth_provider.dart';
 import 'package:jevlis_ka/constants/routes.dart';
-import 'package:jevlis_ka/views/canteen_menu_view.dart';
+import 'package:jevlis_ka/theme/theme.dart';
 import 'package:jevlis_ka/views/choose_canteen_view.dart';
+// import 'package:jevlis_ka/views/choose_canteen_screen.dart';
+import 'package:jevlis_ka/views/user_home_view.dart';
 import 'package:jevlis_ka/views/login_view.dart';
 import 'package:jevlis_ka/views/register_view.dart';
-import 'package:jevlis_ka/views/view_cart_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     title: 'Food App',
-    theme: ThemeData(
-      colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepOrange, brightness: Brightness.light),
-      useMaterial3: false,
-    ),
+    theme: mainTheme,
     home: BlocProvider<AuthBloc>(
       create: (context) => AuthBloc(FirebaseAuthProvider()),
       child: const UserApp(),
     ),
     routes: {
-      '/login_view/': (context) => const LoginView(),
-      '/register_view/': (context) => const RegisterView(),
       chooseCanteenRoute: (context) => const ChooseCanteenView(),
-      chooseItemRoute: (context) => const CanteenMenuView(),
-      cartRoute: (context) => const ViewCartView(),
+      userHomeRoute: (context) => const UserHomeView(),
     },
   ));
 }
@@ -53,7 +47,12 @@ class UserApp extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthStateLoggedInUser) {
-          return const ChooseCanteenView();
+          // TODO: create auth state with canteen id as parameter
+          // to directly open canteen menu view
+
+          // TODO: change to choose canteen screen
+          // return const ChooseCanteenScreen();
+          return const UserHomeView();
         } else if (state is AuthStateLoggedOut) {
           return const LoginView();
         } else if (state is AuthStateRegistering) {

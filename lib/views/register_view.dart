@@ -34,65 +34,57 @@ class _RegisterViewState extends State<RegisterView> {
   Widget build(BuildContext context) {
     // TODO: Add exception handling using bloclistener
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.deepOrange,
-              Colors.black87,
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(96.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                "C R E A T E   A C C O U N T",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-              ),
-              const SizedBox(
-                height: 90,
-              ),
-              RegisterTextField(
-                  hintText: "Email",
-                  obscureText: false,
-                  controller: _emailController),
-              RegisterTextField(
-                  hintText: "Password",
-                  obscureText: true,
-                  controller: _passwordController),
-              RegisterLoginButton(
-                text: "Continue",
-                onPressed: () async {
-                  final email = _emailController.text;
-                  final password = _passwordController.text;
-                  context
-                      .read<AuthBloc>()
-                      .add(AuthEventRegister(email: email, password: password));
-                },
-              ),
-              const Padding(padding: EdgeInsets.all(10.0), child: Text("Or")),
-              RegisterLoginButton(
-                  text: "Sign Up with Google",
-                  onPressed: () {
-                    context.read<AuthBloc>().add(AuthEventGoogleLoginUser());
-                  }),
-              const Padding(
-                  padding: EdgeInsets.only(top: 20.0, bottom: 7.0),
-                  child: Text("Already Registered?")),
-              RegisterLoginButton(
-                text: "Login",
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: Padding(
+        padding: const EdgeInsets.all(96.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "C R E A T E   A C C O U N T",
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(
+              height: 90,
+            ),
+            RegisterTextField(
+                hintText: "Email",
+                obscureText: false,
+                controller: _emailController),
+            RegisterTextField(
+                hintText: "Password",
+                obscureText: true,
+                controller: _passwordController),
+            RegisterLoginButton(
+              color: Theme.of(context).colorScheme.secondary,
+              text: "Continue",
+              onPressed: () async {
+                final email = _emailController.text;
+                final password = _passwordController.text;
+                context
+                    .read<AuthBloc>()
+                    .add(AuthEventRegister(email: email, password: password));
+              },
+            ),
+            const Padding(padding: EdgeInsets.all(10.0), child: Text("Or")),
+            RegisterLoginButton(
+                color: Theme.of(context).colorScheme.secondary,
+                text: "Sign Up with Google",
                 onPressed: () {
-                  context.read<AuthBloc>().add(AuthEventLogOut());
-                },
-              )
-            ],
-          ),
+                  context.read<AuthBloc>().add(AuthEventGoogleLoginUser());
+                }),
+            const Padding(
+                padding: EdgeInsets.only(top: 20.0, bottom: 7.0),
+                child: Text("Already Registered?")),
+            RegisterLoginButton(
+              color: Theme.of(context).colorScheme.tertiary,
+              text: "Go to login View",
+              onPressed: () {
+                context.read<AuthBloc>().add(AuthEventLogOut());
+              },
+            )
+          ],
         ),
       ),
     );
