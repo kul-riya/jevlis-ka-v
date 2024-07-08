@@ -1,6 +1,6 @@
-import 'package:jevlis_ka/auth/auth_provider.dart';
-import 'package:jevlis_ka/auth/auth_user.dart';
-import 'package:jevlis_ka/auth/firebase_auth_provider.dart';
+import 'package:jevlis_ka/services/auth/auth_provider.dart';
+import 'package:jevlis_ka/services/auth/auth_user.dart';
+import 'package:jevlis_ka/services/auth/firebase_auth_provider.dart';
 
 class AuthService implements AuthProvider {
   final AuthProvider provider;

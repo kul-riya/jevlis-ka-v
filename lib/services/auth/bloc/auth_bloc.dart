@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
-import 'package:jevlis_ka/auth/auth_provider.dart';
-import 'package:jevlis_ka/auth/bloc/auth_event.dart';
-import 'package:jevlis_ka/auth/bloc/auth_state.dart';
+import 'package:jevlis_ka/services/auth/auth_provider.dart';
+import 'package:jevlis_ka/services/auth/bloc/auth_event.dart';
+import 'package:jevlis_ka/services/auth/bloc/auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(AuthProvider provider) : super(const AuthStateLoading()) {

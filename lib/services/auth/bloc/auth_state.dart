@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:jevlis_ka/auth/auth_user.dart';
+import 'package:jevlis_ka/services/auth/auth_user.dart';
 
 @immutable
 abstract class AuthState {

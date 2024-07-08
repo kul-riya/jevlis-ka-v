@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:jevlis_ka/auth/bloc/auth_bloc.dart';
-import 'package:jevlis_ka/auth/bloc/auth_event.dart';
-import 'package:jevlis_ka/auth/bloc/auth_state.dart';
-import 'package:jevlis_ka/auth/firebase_auth_provider.dart';
+import 'package:jevlis_ka/services/auth/bloc/auth_bloc.dart';
+import 'package:jevlis_ka/services/auth/bloc/auth_event.dart';
+import 'package:jevlis_ka/services/auth/bloc/auth_state.dart';
+import 'package:jevlis_ka/services/auth/firebase_auth_provider.dart';
 import 'package:jevlis_ka/constants/routes.dart';
 import 'package:jevlis_ka/theme/theme.dart';
 import 'package:jevlis_ka/views/choose_canteen_view.dart';
@@ -50,9 +50,7 @@ class UserApp extends StatelessWidget {
           // TODO: create auth state with canteen id as parameter
           // to directly open canteen menu view
 
-          // TODO: change to choose canteen screen
-          // return const ChooseCanteenScreen();
-          return const UserHomeView();
+          return const ChooseCanteenView();
         } else if (state is AuthStateLoggedOut) {
           return const LoginView();
         } else if (state is AuthStateRegistering) {

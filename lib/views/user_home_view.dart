@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jevlis_ka/components/bottom_navbar_google.dart';
 import 'package:jevlis_ka/constants/routes.dart';
+import 'package:jevlis_ka/utilities/extensions/get_argument.dart';
 import 'package:jevlis_ka/views/canteen_menu_view.dart';
 import 'package:jevlis_ka/views/view_cart_view.dart';
 
@@ -14,16 +15,19 @@ class UserHomeView extends StatefulWidget {
 class _UserHomeViewState extends State<UserHomeView> {
   int _selectedpage = 0;
 
-  final List<Widget> _pages = [
-    // choose item screen
-    const CanteenMenuView(),
-
-    // cart screen
-    const ViewCartView(),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final canteenId = context.getArgument<String>();
+    final List<Widget> pages = [
+      // choose item screen
+      CanteenMenuView(
+        canteenId: canteenId,
+      ),
+
+      // cart screen
+      const ViewCartView(),
+    ];
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepOrange,
@@ -31,11 +35,12 @@ class _UserHomeViewState extends State<UserHomeView> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () {
-            Navigator.of(context).pushNamed(chooseCanteenRoute);
+            Navigator.of(context)
+                .pushNamedAndRemoveUntil(chooseCanteenRoute, (route) => false);
           },
         ),
       ),
-      body: _pages[_selectedpage],
+      body: pages[_selectedpage],
       bottomNavigationBar: MyGBottomNavBar(
         onTabChange: (index) {
           setState(() {
