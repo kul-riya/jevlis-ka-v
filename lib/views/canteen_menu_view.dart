@@ -21,14 +21,14 @@ class _CanteenMenuViewState extends State<CanteenMenuView> {
 
   @override
   Widget build(BuildContext context) {
-    final String canteenId = widget.canteenId ?? '';
+    final String canteenIdhere = widget.canteenId ?? '';
     return Scaffold(
         body: StreamBuilder(
-      stream: _canteenService.getMenuItems(canteenId: canteenId),
+      stream: _canteenService.getMenuItems(canteenId: canteenIdhere),
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
-          case ConnectionState.active:
           case ConnectionState.waiting:
+          case ConnectionState.active:
             if (snapshot.hasData) {
               final allMenuItems = snapshot.data as Iterable<MenuItem>;
               return MenuItemList(
@@ -59,9 +59,8 @@ class MenuItemList extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 100,
-      ),
-      padding: const EdgeInsets.all(12),
+          maxCrossAxisExtent: 220, crossAxisSpacing: 20, mainAxisSpacing: 20),
+      padding: const EdgeInsets.all(24),
       physics: const BouncingScrollPhysics(),
       cacheExtent: 5,
       itemCount: menuItems.length,
