@@ -7,9 +7,11 @@ class MenuItem {
   final String name;
   final int price;
   final String canteenId;
+  final String imagePath;
 
   const MenuItem(
-      {required this.id,
+      {required this.imagePath,
+      required this.id,
       required this.name,
       required this.price,
       required this.canteenId});
@@ -18,5 +20,6 @@ class MenuItem {
       : id = snapshot.id,
         name = snapshot.data()['name'],
         price = snapshot.data()['price'],
-        canteenId = snapshot.data()['canteenId'];
+        canteenId = snapshot.data()['canteenId'],
+        imagePath = snapshot.data()['imagePath'];
 }

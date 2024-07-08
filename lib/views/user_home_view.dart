@@ -20,9 +20,7 @@ class _UserHomeViewState extends State<UserHomeView> {
     final canteenId = context.getArgument<String>();
     final List<Widget> pages = [
       // choose item screen
-      CanteenMenuView(
-        canteenId: canteenId,
-      ),
+      CanteenMenuView(canteenId: canteenId),
 
       // cart screen
       const ViewCartView(),

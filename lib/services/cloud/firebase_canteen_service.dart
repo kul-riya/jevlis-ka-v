@@ -11,8 +11,8 @@ class FirebaseCanteenService {
       .snapshots()
       .map((event) => event.docs.map((doc) => Canteen.fromSnapshot(doc)));
 
-  Stream<Iterable<MenuItem>> getMenuItems({required String canteeId}) =>
-      menuItems
-          .snapshots()
-          .map((event) => event.docs.map((doc) => MenuItem.fromSnapshot(doc)));
+  Stream<Iterable<MenuItem>> getMenuItems({required String canteenId}) =>
+      menuItems.snapshots().map((event) => event.docs
+          .map((doc) => MenuItem.fromSnapshot(doc))
+          .where((item) => item.canteenId == canteenId));
 }
