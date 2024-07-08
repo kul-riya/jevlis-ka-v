@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
 import 'package:jevlis_ka/constants/routes.dart';
 import 'package:jevlis_ka/models/canteen_model.dart';
 import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
@@ -14,7 +15,6 @@ class CanteenCard extends StatelessWidget {
   final String name;
   final String imagePath;
 
-// TODO: Add image background
   @override
   Widget build(BuildContext context) {
     return Center(
