@@ -77,7 +77,9 @@ class _LoginViewState extends State<LoginView> {
                 color: Theme.of(context).colorScheme.secondary,
                 text: "Sign In with Google",
                 onPressed: () async {
-                  context.read<AuthBloc>().add(AuthEventGoogleLoginUser());
+                  context
+                      .read<AuthBloc>()
+                      .add(const AuthEventGoogleLoginUser());
                 }),
             const Padding(
                 padding: EdgeInsets.only(top: 20.0, bottom: 7.0),
@@ -86,7 +88,7 @@ class _LoginViewState extends State<LoginView> {
               color: Theme.of(context).colorScheme.tertiary,
               text: "Register Now",
               onPressed: () {
-                context.read<AuthBloc>().add(AuthEventShouldRegister());
+                context.read<AuthBloc>().add(const AuthEventShouldRegister());
               },
             )
           ],

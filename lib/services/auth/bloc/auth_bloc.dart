@@ -45,6 +45,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       },
     );
 
+    on<AuthEventCanteenSelected>(
+      (event, emit) {
+        emit(AuthStateChosenCanteen(canteenId: event.canteenId));
+      },
+    );
+
     on<AuthEventShouldRegister>(
       (event, emit) {
         emit(const AuthStateRegistering(exception: null));

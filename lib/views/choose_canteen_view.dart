@@ -1,9 +1,10 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-// import 'package:firebase_storage/firebase_storage.dart';
-import 'package:jevlis_ka/constants/routes.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jevlis_ka/models/canteen_model.dart';
+import 'package:jevlis_ka/services/auth/bloc/auth_bloc.dart';
+import 'package:jevlis_ka/services/auth/bloc/auth_event.dart';
 import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
 
 class CanteenCard extends StatelessWidget {
@@ -84,11 +85,9 @@ class _ChooseCanteenViewState extends State<ChooseCanteenView> {
                 return CanteenListView(
                   canteens: allCanteens,
                   onTap: (canteenId) {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      userHomeRoute,
-                      (route) => false,
-                      arguments: canteenId,
-                    );
+                    context
+                        .read<AuthBloc>()
+                        .add(AuthEventCanteenSelected(canteenId: canteenId));
                   },
                 );
               } else {

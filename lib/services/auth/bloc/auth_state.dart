@@ -25,6 +25,12 @@ class AuthStateLoggedInUser extends AuthState {
   const AuthStateLoggedInUser({required this.user});
 }
 
+class AuthStateChosenCanteen extends AuthState {
+  final String canteenId;
+
+  const AuthStateChosenCanteen({required this.canteenId});
+}
+
 class AuthStateLoggedInCanteen extends AuthState {
   final AuthUser user;
 

@@ -16,9 +16,19 @@ class AuthEventEmailLoginUser extends AuthEvent {
   const AuthEventEmailLoginUser({required this.email, required this.password});
 }
 
-class AuthEventGoogleLoginUser extends AuthEvent {}
+class AuthEventGoogleLoginUser extends AuthEvent {
+  const AuthEventGoogleLoginUser();
+}
 
-class AuthEventShouldRegister extends AuthEvent {}
+class AuthEventCanteenSelected extends AuthEvent {
+  final String canteenId;
+
+  const AuthEventCanteenSelected({required this.canteenId});
+}
+
+class AuthEventShouldRegister extends AuthEvent {
+  const AuthEventShouldRegister();
+}
 
 class AuthEventRegister extends AuthEvent {
   final String email;

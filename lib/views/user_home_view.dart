@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:jevlis_ka/components/bottom_navbar_google.dart';
 import 'package:jevlis_ka/constants/routes.dart';
-import 'package:jevlis_ka/utilities/extensions/get_argument.dart';
+// import 'package:jevlis_ka/utilities/extensions/get_argument.dart';
 import 'package:jevlis_ka/views/canteen_menu_view.dart';
 import 'package:jevlis_ka/views/view_cart_view.dart';
 
 class UserHomeView extends StatefulWidget {
-  const UserHomeView({super.key});
+  final String canteenId;
+  const UserHomeView({super.key, required this.canteenId});
 
   @override
   State<UserHomeView> createState() => _UserHomeViewState();
@@ -17,10 +18,9 @@ class _UserHomeViewState extends State<UserHomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final canteenId = context.getArgument<String>();
     final List<Widget> pages = [
       // choose item screen
-      CanteenMenuView(canteenId: canteenId),
+      CanteenMenuView(canteenId: widget.canteenId),
 
       // cart screen
       const ViewCartView(),

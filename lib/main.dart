@@ -24,7 +24,7 @@ void main() {
     ),
     routes: {
       chooseCanteenRoute: (context) => const ChooseCanteenView(),
-      userHomeRoute: (context) => const UserHomeView(),
+      // userHomeRoute: (context) => const UserHomeView(),
     },
   ));
 }
@@ -43,13 +43,16 @@ class UserApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // AuthEventInitialize is calling to firebase if user is logged
+    //in and then returning corresponding AuthState
     context.read<AuthBloc>().add(const AuthEventInitialize());
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
-        if (state is AuthStateLoggedInUser) {
+        if (state is AuthStateChosenCanteen) {
+          return UserHomeView(canteenId: state.canteenId);
+        } else if (state is AuthStateLoggedInUser) {
           // TODO: create auth state with canteen id as parameter
           // to directly open canteen menu view
-
           return const ChooseCanteenView();
         } else if (state is AuthStateLoggedOut) {
           return const LoginView();

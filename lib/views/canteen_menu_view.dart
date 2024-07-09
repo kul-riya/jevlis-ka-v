@@ -3,7 +3,7 @@ import 'package:jevlis_ka/models/menu_item_model.dart';
 import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
 
 class CanteenMenuView extends StatefulWidget {
-  final String? canteenId;
+  final String canteenId;
   const CanteenMenuView({super.key, required this.canteenId});
 
   @override
@@ -21,7 +21,7 @@ class _CanteenMenuViewState extends State<CanteenMenuView> {
 
   @override
   Widget build(BuildContext context) {
-    final String canteenIdhere = widget.canteenId ?? '';
+    final String canteenIdhere = widget.canteenId;
     return Scaffold(
         body: StreamBuilder(
       stream: _canteenService.getMenuItems(canteenId: canteenIdhere),
