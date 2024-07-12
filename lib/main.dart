@@ -7,7 +7,6 @@ import 'package:jevlis_ka/services/auth/firebase_auth_provider.dart';
 import 'package:jevlis_ka/constants/routes.dart';
 import 'package:jevlis_ka/theme/theme.dart';
 import 'package:jevlis_ka/views/choose_canteen_view.dart';
-// import 'package:jevlis_ka/views/choose_canteen_screen.dart';
 import 'package:jevlis_ka/views/user_home_view.dart';
 import 'package:jevlis_ka/views/login_view.dart';
 import 'package:jevlis_ka/views/register_view.dart';
@@ -16,7 +15,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    title: 'Food App',
+    title: 'Jevlis ka?',
     theme: mainTheme,
     home: BlocProvider<AuthBloc>(
       create: (context) => AuthBloc(FirebaseAuthProvider()),
@@ -24,7 +23,6 @@ void main() {
     ),
     routes: {
       chooseCanteenRoute: (context) => const ChooseCanteenView(),
-      // userHomeRoute: (context) => const UserHomeView(),
     },
   ));
 }
@@ -49,7 +47,10 @@ class UserApp extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthStateChosenCanteen) {
-          return UserHomeView(canteenId: state.canteenId);
+          return UserHomeView(
+            canteenId: state.canteenId,
+            name: state.name,
+          );
         } else if (state is AuthStateLoggedInUser) {
           // TODO: create auth state with canteen id as parameter
           // to directly open canteen menu view

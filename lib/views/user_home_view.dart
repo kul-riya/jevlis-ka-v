@@ -7,7 +7,8 @@ import 'package:jevlis_ka/views/view_cart_view.dart';
 
 class UserHomeView extends StatefulWidget {
   final String canteenId;
-  const UserHomeView({super.key, required this.canteenId});
+  final String name;
+  const UserHomeView({super.key, required this.canteenId, required this.name});
 
   @override
   State<UserHomeView> createState() => _UserHomeViewState();
@@ -20,15 +21,24 @@ class _UserHomeViewState extends State<UserHomeView> {
   Widget build(BuildContext context) {
     final List<Widget> pages = [
       // choose item screen
-      CanteenMenuView(canteenId: widget.canteenId),
+      CanteenMenuView(
+        canteenId: widget.canteenId,
+        name: widget.name,
+      ),
 
       // cart screen
       const ViewCartView(),
     ];
 
+    final List<String> titles = ['Menu ${widget.name}', 'Your Cart'];
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepOrange,
+        title: Text(
+          titles[_selectedpage],
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),

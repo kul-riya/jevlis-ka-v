@@ -44,7 +44,7 @@ class _LoginViewState extends State<LoginView> {
           children: [
             Text(
               "L O G   I N   T O   A C C O U N T",
-              style: Theme.of(context).textTheme.titleLarge,
+              style: Theme.of(context).textTheme.displaySmall,
             ),
             const SizedBox(
               height: 90,

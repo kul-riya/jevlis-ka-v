@@ -1,10 +1,14 @@
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_ui_storage/firebase_ui_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:jevlis_ka/models/menu_item_model.dart';
 import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
 
 class CanteenMenuView extends StatefulWidget {
   final String canteenId;
-  const CanteenMenuView({super.key, required this.canteenId});
+  final String name;
+  const CanteenMenuView(
+      {super.key, required this.canteenId, required this.name});
 
   @override
   State<CanteenMenuView> createState() => _CanteenMenuViewState();
@@ -53,13 +57,15 @@ class MenuItemList extends StatelessWidget {
   final Iterable<MenuItem> menuItems;
   final ItemCallBack onTap;
 
-  const MenuItemList({super.key, required this.menuItems, required this.onTap});
+  final FirebaseCanteenService _canteenService = FirebaseCanteenService();
+
+  MenuItemList({super.key, required this.menuItems, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 220, crossAxisSpacing: 20, mainAxisSpacing: 20),
+          maxCrossAxisExtent: 250, crossAxisSpacing: 50, mainAxisSpacing: 50),
       padding: const EdgeInsets.all(24),
       physics: const BouncingScrollPhysics(),
       cacheExtent: 5,
@@ -70,7 +76,8 @@ class MenuItemList extends StatelessWidget {
           child: MenuItemCard(
               name: menuItem.name,
               price: menuItem.price,
-              imagePath: menuItem.imagePath),
+              imageRef: _canteenService.getImageReference(
+                  imagePath: menuItem.imagePath)),
           onTap: () {
             onTap(menuItem.id);
           },
@@ -83,26 +90,49 @@ class MenuItemList extends StatelessWidget {
 class MenuItemCard extends StatelessWidget {
   final String name;
   final int price;
-  final String imagePath;
+  final Reference imageRef;
   const MenuItemCard(
       {super.key,
       required this.name,
       required this.price,
-      required this.imagePath});
+      required this.imageRef});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 100,
-      height: 100,
       decoration: const BoxDecoration(
-          boxShadow: [BoxShadow(color: Colors.black45, blurRadius: 5)]),
-      child: Center(
-        child: Text(
-          name,
-          style: Theme.of(context).textTheme.labelMedium,
-        ),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black26, blurRadius: 2.0, offset: Offset(3, 3)),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            width: 250,
+            height: 180,
+            child: ClipRect(
+              // clipper: PhotoClipper(),
+              child: StorageImage(
+                ref: imageRef,
+                fit: BoxFit.fitWidth,
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
+}
+
+class PhotoClipper extends CustomClipper<Rect> {
+  @override
+  Rect getClip(Size size) {
+    return Rect.fromLTWH(0, 0, size.width, size.height / 2);
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Rect> oldClipper) => false;
 }

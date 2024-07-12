@@ -6,12 +6,17 @@ class Canteen {
   final String canteenId;
   final String name;
   final String imagePath;
+  final String location;
 
   const Canteen(
-      {required this.canteenId, required this.name, required this.imagePath});
+      {required this.location,
+      required this.canteenId,
+      required this.name,
+      required this.imagePath});
 
   Canteen.fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot)
       : canteenId = snapshot.id,
         name = snapshot.data()['name']!,
-        imagePath = snapshot.data()['imagePath']!;
+        imagePath = snapshot.data()['imagePath']!,
+        location = snapshot.data()['location'];
 }

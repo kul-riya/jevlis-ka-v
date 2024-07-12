@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:firebase_ui_storage/firebase_ui_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jevlis_ka/models/canteen_model.dart';
@@ -7,32 +8,54 @@ import 'package:jevlis_ka/services/auth/bloc/auth_bloc.dart';
 import 'package:jevlis_ka/services/auth/bloc/auth_event.dart';
 import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
 
+// ignore: must_be_immutable
 class CanteenCard extends StatelessWidget {
-  const CanteenCard({
-    super.key,
-    required this.name,
-    required this.imagePath,
-  });
+  CanteenCard(
+      {super.key,
+      required this.name,
+      required this.imagePath,
+      required this.location,
+      required this.canteenService});
   final String name;
   final String imagePath;
+  final String location;
+  FirebaseCanteenService canteenService;
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Container(
-          width: 300,
-          height: 200,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: Theme.of(context).colorScheme.background),
-          child: Center(
-            child: Text(
-              name,
-              style: Theme.of(context).textTheme.headlineMedium,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+        child: Stack(
+          alignment: Alignment.bottomLeft,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: StorageImage(
+                ref: canteenService.getImageReference(imagePath: imagePath),
+                width: 300,
+                height: 200,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
+            Positioned(
+              bottom: 10,
+              left: 10,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  Text(
+                    location,
+                    style: Theme.of(context).textTheme.labelSmall,
+                  )
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );
@@ -82,19 +105,29 @@ class _ChooseCanteenViewState extends State<ChooseCanteenView> {
             case ConnectionState.done:
               if (snapshot.hasData) {
                 final allCanteens = snapshot.data as Iterable<Canteen>;
-                return CanteenListView(
-                  canteens: allCanteens,
-                  onTap: (canteenId) {
-                    context
-                        .read<AuthBloc>()
-                        .add(AuthEventCanteenSelected(canteenId: canteenId));
+                return ListView.builder(
+                  itemCount: allCanteens.length,
+                  itemBuilder: (context, index) {
+                    final canteen = allCanteens.elementAt(index);
+                    return GestureDetector(
+                      onTap: () {
+                        context.read<AuthBloc>().add(AuthEventCanteenSelected(
+                            canteenId: canteen.canteenId, name: canteen.name));
+                      },
+                      child: CanteenCard(
+                        name: canteen.name,
+                        imagePath: canteen.imagePath,
+                        location: canteen.location,
+                        canteenService: _canteenService,
+                      ),
+                    );
                   },
                 );
               } else {
-                return const CircularProgressIndicator();
+                return const Center(child: CircularProgressIndicator());
               }
             default:
-              return const CircularProgressIndicator();
+              return const Center(child: CircularProgressIndicator());
           }
         },
       ),
@@ -102,30 +135,31 @@ class _ChooseCanteenViewState extends State<ChooseCanteenView> {
   }
 }
 
-typedef UserHomeCallBack = void Function(String canteenId);
+// typedef UserHomeCallBack = void Function(String canteenId);
 
-class CanteenListView extends StatelessWidget {
-  const CanteenListView(
-      {super.key, required this.canteens, required this.onTap});
+// class CanteenListView extends StatelessWidget {
+//   const CanteenListView(
+//       {super.key, required this.canteens, required this.onTap});
 
-  final Iterable<Canteen> canteens;
-  final UserHomeCallBack onTap;
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: canteens.length,
-      itemBuilder: (context, index) {
-        final canteen = canteens.elementAt(index);
-        return GestureDetector(
-          onTap: () {
-            onTap(canteen.canteenId);
-          },
-          child: CanteenCard(
-            name: canteen.name,
-            imagePath: canteen.imagePath,
-          ),
-        );
-      },
-    );
-  }
-}
+//   final Iterable<Canteen> canteens;
+//   final UserHomeCallBack onTap;
+//   @override
+//   Widget build(BuildContext context) {
+//     return ListView.builder(
+//       itemCount: canteens.length,
+//       itemBuilder: (context, index) {
+//         final canteen = canteens.elementAt(index);
+//         return GestureDetector(
+//           onTap: () {
+//             onTap(canteen.canteenId);
+//           },
+//           child: CanteenCard(
+//             name: canteen.name,
+//             imagePath: canteen.imagePath,
+//             location: canteen.location,
+//           ),
+//         );
+//       },
+//     );
+//   }
+// }

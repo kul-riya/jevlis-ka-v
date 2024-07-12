@@ -1,11 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jevlis_ka/models/canteen_model.dart';
 import 'package:jevlis_ka/models/menu_item_model.dart';
-// import 'package:jevlis_ka/models/canteen_model.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class FirebaseCanteenService {
   final canteens = FirebaseFirestore.instance.collection('Canteens');
   final menuItems = FirebaseFirestore.instance.collection('MenuItems');
+
+  // creating storage bucket and it's reference
+
+  Reference getImageReference({required String imagePath}) =>
+      FirebaseStorage.instance.ref(imagePath);
 
   Stream<Iterable<Canteen>> getCanteens() => canteens
       .snapshots()

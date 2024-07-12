@@ -43,7 +43,7 @@ class _RegisterViewState extends State<RegisterView> {
           children: [
             Text(
               "C R E A T E   A C C O U N T",
-              style: Theme.of(context).textTheme.titleLarge,
+              style: Theme.of(context).textTheme.displaySmall,
             ),
             const SizedBox(
               height: 90,
@@ -72,7 +72,9 @@ class _RegisterViewState extends State<RegisterView> {
                 color: Theme.of(context).colorScheme.secondary,
                 text: "Sign Up with Google",
                 onPressed: () {
-                  context.read<AuthBloc>().add(AuthEventGoogleLoginUser());
+                  context
+                      .read<AuthBloc>()
+                      .add(const AuthEventGoogleLoginUser());
                 }),
             const Padding(
                 padding: EdgeInsets.only(top: 20.0, bottom: 7.0),
