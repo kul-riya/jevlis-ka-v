@@ -38,7 +38,6 @@ class _CanteenMenuViewState extends State<CanteenMenuView> {
               final allMenuItems = snapshot.data as Iterable<MenuItem>;
               return MenuItemList(
                 menuItems: allMenuItems,
-                onTap: (itemId) {},
               );
             } else {
               return const Center(child: CircularProgressIndicator());
@@ -52,15 +51,13 @@ class _CanteenMenuViewState extends State<CanteenMenuView> {
 }
 
 // TODO: create item desciption when ItemCallback is called ontap
-typedef ItemCallBack = void Function(String itemId);
 
 class MenuItemList extends StatelessWidget {
   final Iterable<MenuItem> menuItems;
-  final ItemCallBack onTap;
 
   final FirebaseCanteenService _canteenService = FirebaseCanteenService();
 
-  MenuItemList({super.key, required this.menuItems, required this.onTap});
+  MenuItemList({super.key, required this.menuItems});
 
   @override
   Widget build(BuildContext context) {
@@ -79,9 +76,7 @@ class MenuItemList extends StatelessWidget {
               price: menuItem.price,
               imageRef: _canteenService.getImageReference(
                   imagePath: menuItem.imagePath)),
-          onTap: () {
-            onTap(menuItem.id);
-          },
+          onTap: () {},
         );
       },
     );

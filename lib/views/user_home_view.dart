@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jevlis_ka/components/bottom_navbar_google.dart';
 import 'package:jevlis_ka/constants/routes.dart';
+import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
 // import 'package:jevlis_ka/utilities/extensions/get_argument.dart';
 import 'package:jevlis_ka/views/canteen_menu_view.dart';
 import 'package:jevlis_ka/views/view_cart_view.dart';
@@ -16,7 +17,14 @@ class UserHomeView extends StatefulWidget {
 }
 
 class _UserHomeViewState extends State<UserHomeView> {
+  late final FirebaseCanteenService _canteenService;
   int _selectedpage = 0;
+
+  @override
+  void initState() {
+    _canteenService = FirebaseCanteenService();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,30 +43,38 @@ class _UserHomeViewState extends State<UserHomeView> {
 
     final List<String> titles = ['Menu ${widget.name}', 'Your Cart'];
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.deepOrange,
-        title: Text(
-          titles[_selectedpage],
-          style: Theme.of(context).textTheme.headlineMedium,
-        ),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () {
-            Navigator.of(context)
-                .pushNamedAndRemoveUntil(chooseCanteenRoute, (route) => false);
-          },
-        ),
-      ),
-      body: pages[_selectedpage],
-      bottomNavigationBar: MyGBottomNavBar(
-        onTabChange: (index) {
-          setState(() {
-            _selectedpage = index;
-          });
-        },
-      ),
-    );
+    return StreamBuilder(
+        stream: _canteenService.getMenuItems(canteenId: widget.canteenId),
+        builder: ((context, snapshot1) {
+          return StreamBuilder(
+              stream: _canteenService.getCart(),
+              builder: (context, snapshot2) {
+                return Scaffold(
+                  appBar: AppBar(
+                    backgroundColor: Colors.deepOrange,
+                    title: Text(
+                      titles[_selectedpage],
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                    elevation: 0,
+                    leading: IconButton(
+                      icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                      onPressed: () {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            chooseCanteenRoute, (route) => false);
+                      },
+                    ),
+                  ),
+                  body: pages[_selectedpage],
+                  bottomNavigationBar: MyGBottomNavBar(
+                    onTabChange: (index) {
+                      setState(() {
+                        _selectedpage = index;
+                      });
+                    },
+                  ),
+                );
+              });
+        }));
   }
 }
