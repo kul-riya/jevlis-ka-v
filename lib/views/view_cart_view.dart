@@ -4,7 +4,7 @@ import 'package:jevlis_ka/models/menu_item_model.dart';
 
 class ViewCartView extends StatefulWidget {
   final Iterable<MenuItem> allMenuItems;
-  final Cart userCart;
+  final Cart? userCart;
   const ViewCartView(
       {super.key, required this.allMenuItems, required this.userCart});
 
@@ -15,11 +15,11 @@ class ViewCartView extends StatefulWidget {
 class _ViewCartViewState extends State<ViewCartView> {
   @override
   Widget build(BuildContext context) {
-    final cartItems = widget.userCart.cartItems;
+    final cartItems = widget.userCart?.cartItems;
     return ListView.builder(
-      itemCount: cartItems.length,
+      itemCount: cartItems?.length,
       itemBuilder: (context, index) {
-        return CartItemWidget(cartItem: cartItems.elementAt(index));
+        return CartItemWidget(cartItem: cartItems?.elementAt(index));
       },
     );
   }

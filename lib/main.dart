@@ -52,7 +52,7 @@ class UserApp extends StatelessWidget {
             name: state.name,
           );
         } else if (state is AuthStateLoggedInUser) {
-          // TODO: create auth state with canteen id as parameter
+          // TODO: create auth state with canteen id as parameter USING WEB CLIENT STATE
           // to directly open canteen menu view
           return const ChooseCanteenView();
         } else if (state is AuthStateLoggedOut) {

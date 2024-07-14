@@ -7,7 +7,7 @@ import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
 
 class CanteenMenuView extends StatefulWidget {
   final Iterable<MenuItem> allMenuItems;
-  final Cart userCart;
+  final Cart? userCart;
 
   const CanteenMenuView(
       {super.key, required this.allMenuItems, required this.userCart});

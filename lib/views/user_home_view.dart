@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jevlis_ka/components/bottom_navbar_google.dart';
-import 'package:jevlis_ka/constants/routes.dart';
 import 'package:jevlis_ka/models/cart_model.dart';
 import 'package:jevlis_ka/models/menu_item_model.dart';
+import 'package:jevlis_ka/services/auth/bloc/auth_bloc.dart';
+import 'package:jevlis_ka/services/auth/bloc/auth_event.dart';
 import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
 import 'package:jevlis_ka/views/canteen_menu_view.dart';
 import 'package:jevlis_ka/views/view_cart_view.dart';
@@ -64,8 +66,9 @@ class _UserHomeViewState extends State<UserHomeView> {
                         leading: IconButton(
                           icon: const Icon(Icons.arrow_back_ios_new_rounded),
                           onPressed: () {
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                                chooseCanteenRoute, (route) => false);
+                            context
+                                .read<AuthBloc>()
+                                .add(const AuthEventInitialize());
                           },
                         ),
                       ),

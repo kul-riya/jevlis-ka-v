@@ -26,7 +26,7 @@ class FirebaseCanteenService {
           .map((doc) => MenuItem.fromSnapshot(doc))
           .where((item) => item.canteenId == canteenId));
 
-  Stream<DocumentSnapshot<Map<String, dynamic>>> getCart() =>
+  Stream<DocumentSnapshot<Map<String, dynamic>>>? getCart() =>
       usersCarts.doc(userId).snapshots();
 
   // Future<String> getCartCanteenId() =>
