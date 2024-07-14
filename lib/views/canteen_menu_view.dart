@@ -20,6 +20,7 @@ class _CanteenMenuViewState extends State<CanteenMenuView> {
   @override
   void initState() {
     _canteenService = FirebaseCanteenService();
+
     super.initState();
   }
 
@@ -102,23 +103,63 @@ class MenuItemCard extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(36), topRight: Radius.circular(36.0)),
         boxShadow: [
           BoxShadow(
               color: Colors.black26, blurRadius: 2.0, offset: Offset(3, 3)),
         ],
       ),
       child: Column(
+        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            width: 250,
+          SizedBox(
+            width: double.infinity,
             height: 180,
-            child: ClipRect(
-              // clipper: PhotoClipper(),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(36),
+                  topRight: Radius.circular(36.0)),
               child: StorageImage(
                 ref: imageRef,
-                fit: BoxFit.fitWidth,
+                fit: BoxFit.cover,
               ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      overflow: TextOverflow.clip,
+                      name,
+                      style: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    const SizedBox(
+                      height: 3.0,
+                    ),
+                    Text(
+                      '₹ $price',
+                      style:
+                          const TextStyle(fontSize: 11.5, color: Colors.grey),
+                    )
+                  ],
+                ),
+                Row(children: [
+                  IconButton(
+                    icon: const Icon(Icons.remove_circle_outline),
+                    onPressed: () {},
+                  ),
+                  const Text("1"),
+                  IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.add_circle_outline))
+                ])
+              ],
             ),
           )
         ],
@@ -127,12 +168,12 @@ class MenuItemCard extends StatelessWidget {
   }
 }
 
-class PhotoClipper extends CustomClipper<Rect> {
-  @override
-  Rect getClip(Size size) {
-    return Rect.fromLTWH(0, 0, size.width, size.height / 2);
-  }
+// class PhotoClipper extends CustomClipper<Rect> {
+//   @override
+//   Rect getClip(Size size) {
+//     return Rect.fromLTWH(0, 0, size.width, size.height / 2);
+//   }
 
-  @override
-  bool shouldReclip(covariant CustomClipper<Rect> oldClipper) => false;
-}
+//   @override
+//   bool shouldReclip(covariant CustomClipper<Rect> oldClipper) => false;
+// }

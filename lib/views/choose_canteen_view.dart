@@ -30,7 +30,7 @@ class CanteenCard extends StatelessWidget {
           alignment: Alignment.bottomLeft,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(36),
               child: StorageImage(
                 ref: canteenService.getImageReference(imagePath: imagePath),
                 width: 300,
@@ -40,7 +40,7 @@ class CanteenCard extends StatelessWidget {
             ),
             Positioned(
               bottom: 10,
-              left: 10,
+              left: 30,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

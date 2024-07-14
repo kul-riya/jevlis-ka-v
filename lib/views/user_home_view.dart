@@ -8,6 +8,7 @@ import 'package:jevlis_ka/views/view_cart_view.dart';
 class UserHomeView extends StatefulWidget {
   final String canteenId;
   final String name;
+
   const UserHomeView({super.key, required this.canteenId, required this.name});
 
   @override
@@ -27,7 +28,9 @@ class _UserHomeViewState extends State<UserHomeView> {
       ),
 
       // cart screen
-      const ViewCartView(),
+      ViewCartView(
+        canteenId: widget.canteenId,
+      ),
     ];
 
     final List<String> titles = ['Menu ${widget.name}', 'Your Cart'];

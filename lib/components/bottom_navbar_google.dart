@@ -9,7 +9,9 @@ class MyGBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0),
+        padding: const EdgeInsets.symmetric(
+          vertical: 12.0,
+        ),
         child: GNav(
           color: Colors.deepOrange.shade500,
           activeColor: Colors.white,
@@ -17,7 +19,6 @@ class MyGBottomNavBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           tabBorderRadius: 12,
           iconSize: 24,
-          tabMargin: const EdgeInsets.symmetric(horizontal: 12),
           hoverColor: Colors.transparent,
           gap: 8.0,
           onTabChange: onTabChange,
