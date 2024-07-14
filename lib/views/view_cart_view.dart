@@ -1,61 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:jevlis_ka/models/cart_model.dart';
-// import 'package:jevlis_ka/models/cart_model.dart';
-import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
+import 'package:jevlis_ka/models/menu_item_model.dart';
 
 class ViewCartView extends StatefulWidget {
-  final String canteenId;
-  const ViewCartView({super.key, required this.canteenId});
+  final Iterable<MenuItem> allMenuItems;
+  final Cart userCart;
+  const ViewCartView(
+      {super.key, required this.allMenuItems, required this.userCart});
 
   @override
   State<ViewCartView> createState() => _ViewCartViewState();
 }
 
 class _ViewCartViewState extends State<ViewCartView> {
-  late final FirebaseCanteenService _canteenService;
-
-  @override
-  void initState() {
-    _canteenService = FirebaseCanteenService();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: _canteenService.getMenuItems(canteenId: widget.canteenId),
-      builder: (context, snapshot) {
-        return StreamBuilder(
-          stream: _canteenService.getCart(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final userCart = Cart.fromSnapshot(snapshot.data!);
-              final cartItems = userCart.cartItems;
-              return ListView.builder(
-                itemCount: cartItems.length,
-                itemBuilder: (context, index) {
-                  return CartItemWidget(cartItem: cartItems.elementAt(index));
-                },
-              );
-            } else {
-              return const CircularProgressIndicator();
-            }
-          },
-        );
+    final cartItems = widget.userCart.cartItems;
+    return ListView.builder(
+      itemCount: cartItems.length,
+      itemBuilder: (context, index) {
+        return CartItemWidget(cartItem: cartItems.elementAt(index));
       },
     );
   }
 }
 
 class CartItemWidget extends StatelessWidget {
-  final CartMenuItem cartItem;
+  final CartMenuItem? cartItem;
 
   const CartItemWidget({super.key, required this.cartItem});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(cartItem.id),
+      title: Text(cartItem?.id ?? ''),
     );
   }
 }

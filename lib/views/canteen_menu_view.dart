@@ -1,52 +1,27 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_ui_storage/firebase_ui_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:jevlis_ka/models/cart_model.dart';
 import 'package:jevlis_ka/models/menu_item_model.dart';
 import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
 
 class CanteenMenuView extends StatefulWidget {
-  final String canteenId;
-  final String name;
+  final Iterable<MenuItem> allMenuItems;
+  final Cart userCart;
+
   const CanteenMenuView(
-      {super.key, required this.canteenId, required this.name});
+      {super.key, required this.allMenuItems, required this.userCart});
 
   @override
   State<CanteenMenuView> createState() => _CanteenMenuViewState();
 }
 
 class _CanteenMenuViewState extends State<CanteenMenuView> {
-  late final FirebaseCanteenService _canteenService;
-
-  @override
-  void initState() {
-    _canteenService = FirebaseCanteenService();
-
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final String canteenIdhere = widget.canteenId;
-    return Scaffold(
-        body: StreamBuilder(
-      stream: _canteenService.getMenuItems(canteenId: canteenIdhere),
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-          case ConnectionState.active:
-            if (snapshot.hasData) {
-              final allMenuItems = snapshot.data as Iterable<MenuItem>;
-              return MenuItemList(
-                menuItems: allMenuItems,
-              );
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          default:
-            return const Center(child: CircularProgressIndicator());
-        }
-      },
-    ));
+    return MenuItemList(
+      menuItems: widget.allMenuItems,
+    );
   }
 }
 
