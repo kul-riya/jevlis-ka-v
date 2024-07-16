@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:jevlis_ka/services/auth/auth_provider.dart';
 import 'package:jevlis_ka/services/auth/bloc/auth_event.dart';
 import 'package:jevlis_ka/services/auth/bloc/auth_state.dart';
+import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(AuthProvider provider) : super(const AuthStateLoading()) {
@@ -22,10 +23,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (event, emit) async {
         // TODO: check how app behaves if initial state for this event is not provided
         emit(const AuthStateLoading());
+        final FirebaseCanteenService canteenService = FirebaseCanteenService();
+
         try {
           final user = await provider.userLogIn(
               email: event.email, password: event.password);
-          emit(AuthStateLoggedInUser(user: user));
+          if (await canteenService.getAdminCanteenId(uid: user.uid)) {
+            emit(AuthStateLoggedInCanteen(user: user));
+          } else {
+            emit(AuthStateLoggedInUser(user: user));
+          }
         } on Exception catch (e) {
           emit(AuthStateLoggedOut(exception: e));
         }
@@ -36,19 +43,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (event, emit) async {
         // TODO: check how app behaves if initial state for this event is not provided
         emit(const AuthStateLoading());
+        final FirebaseCanteenService canteenService = FirebaseCanteenService();
+
         try {
           final user = await provider.signInWithGoogle();
-          emit(AuthStateLoggedInUser(user: user));
+
+          if (await canteenService.getAdminCanteenId(uid: user.uid)) {
+            emit(AuthStateLoggedInCanteen(user: user));
+          } else {
+            emit(AuthStateLoggedInUser(user: user));
+          }
         } on Exception catch (e) {
           emit(AuthStateLoggedOut(exception: e));
         }
-      },
-    );
-
-    on<AuthEventCanteenSelected>(
-      (event, emit) {
-        emit(AuthStateChosenCanteen(
-            canteenId: event.canteenId, name: event.name));
       },
     );
 
@@ -61,10 +68,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthEventRegister>(
       (event, emit) async {
         emit(const AuthStateLoading());
+        final FirebaseCanteenService canteenService = FirebaseCanteenService();
 
         try {
-          await provider.createUser(
+          final user = await provider.createUser(
               email: event.email, password: event.password);
+
+          await canteenService.addToUsers(uid: user.uid);
           emit(const AuthStateLoggedOut(exception: null));
         } on Exception catch (e) {
           emit(AuthStateRegistering(exception: e));

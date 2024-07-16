@@ -1,33 +1,49 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 
-@immutable
 class CartMenuItem {
   final String id;
-  final int quantity;
-  final double cost;
+  int quantity;
 
-  const CartMenuItem(
-      {required this.id, required this.quantity, required this.cost});
+  CartMenuItem({required this.id, required this.quantity});
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'quantity': quantity,
+      };
 }
 
 class Cart {
-  final Iterable<CartMenuItem> cartItems;
-  final String canteenId;
-  final String id;
+  List<CartMenuItem> cartItems;
+  String canteenId;
+  String canteenName;
+  String id;
+  double total;
 
-  Cart({required this.cartItems, required this.canteenId, required this.id});
+  Cart(
+      {required this.cartItems,
+      required this.canteenId,
+      required this.id,
+      required this.total,
+      required this.canteenName});
 
   Cart.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         canteenId = snapshot['canteenId'],
-        cartItems = (snapshot['cartItems'] as Iterable<dynamic>).map(
-          (item) => CartMenuItem(
-            id: item['id'],
-            quantity: item['quantity'],
-            cost: item['cost'],
-          ),
-        );
+        canteenName = snapshot['canteenName'],
+        total = snapshot['total'],
+        cartItems = (snapshot['cartItems'] as Iterable<dynamic>)
+            .map(
+              (item) => CartMenuItem(
+                id: item['id'],
+                quantity: item['quantity'],
+              ),
+            )
+            .toList();
 
-  // create cart.tojson also
+  Map<String, dynamic> toJson() => {
+        'canteenId': canteenId,
+        'canteenName': canteenName,
+        'cartItems': cartItems.map((cartItem) => cartItem.toJson()).toList(),
+        'total': total,
+      };
 }

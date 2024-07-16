@@ -4,12 +4,11 @@ import 'package:jevlis_ka/services/auth/bloc/auth_bloc.dart';
 import 'package:jevlis_ka/services/auth/bloc/auth_event.dart';
 import 'package:jevlis_ka/services/auth/bloc/auth_state.dart';
 import 'package:jevlis_ka/services/auth/firebase_auth_provider.dart';
-import 'package:jevlis_ka/constants/routes.dart';
 import 'package:jevlis_ka/theme/theme.dart';
-import 'package:jevlis_ka/views/choose_canteen_view.dart';
-import 'package:jevlis_ka/views/user_home_view.dart';
-import 'package:jevlis_ka/views/login_view.dart';
-import 'package:jevlis_ka/views/register_view.dart';
+import 'package:jevlis_ka/views/ADMIN/canteen_home_view.dart';
+import 'package:jevlis_ka/views/USER/choose_canteen_view.dart';
+import 'package:jevlis_ka/views/USER/login_view.dart';
+import 'package:jevlis_ka/views/USER/register_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,11 +18,8 @@ void main() {
     theme: mainTheme,
     home: BlocProvider<AuthBloc>(
       create: (context) => AuthBloc(FirebaseAuthProvider()),
-      child: const UserApp(),
+      child: const AuthApp(),
     ),
-    routes: {
-      chooseCanteenRoute: (context) => const ChooseCanteenView(),
-    },
   ));
 }
 
@@ -32,29 +28,13 @@ class AuthApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
-
-class UserApp extends StatelessWidget {
-  const UserApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    // AuthEventInitialize is calling to firebase if user is logged
-    //in and then returning corresponding AuthState
     context.read<AuthBloc>().add(const AuthEventInitialize());
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
-        if (state is AuthStateChosenCanteen) {
-          return UserHomeView(
-            canteenId: state.canteenId,
-            name: state.name,
-          );
-        } else if (state is AuthStateLoggedInUser) {
-          // TODO: create auth state with canteen id as parameter USING WEB CLIENT STATE
-          // to directly open canteen menu view
-          return const ChooseCanteenView();
+        if (state is AuthStateLoggedInUser) {
+          return const UserApp();
+        } else if (state is AuthStateLoggedInCanteen) {
+          return const CanteenApp();
         } else if (state is AuthStateLoggedOut) {
           return const LoginView();
         } else if (state is AuthStateRegistering) {
@@ -71,11 +51,20 @@ class UserApp extends StatelessWidget {
   }
 }
 
+class UserApp extends StatelessWidget {
+  const UserApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const ChooseCanteenView();
+  }
+}
+
 class CanteenApp extends StatelessWidget {
   const CanteenApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const CanteenHomeView();
   }
 }

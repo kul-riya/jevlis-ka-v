@@ -20,13 +20,6 @@ class AuthEventGoogleLoginUser extends AuthEvent {
   const AuthEventGoogleLoginUser();
 }
 
-class AuthEventCanteenSelected extends AuthEvent {
-  final String canteenId;
-  final String name;
-
-  const AuthEventCanteenSelected({required this.name, required this.canteenId});
-}
-
 class AuthEventShouldRegister extends AuthEvent {
   const AuthEventShouldRegister();
 }

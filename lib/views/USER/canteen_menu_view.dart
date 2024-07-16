@@ -6,51 +6,68 @@ import 'package:jevlis_ka/models/menu_item_model.dart';
 import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
 
 class CanteenMenuView extends StatefulWidget {
+  final String canteenId;
   final Iterable<MenuItem> allMenuItems;
   final Cart? userCart;
+  final String canteenName;
 
   const CanteenMenuView(
-      {super.key, required this.allMenuItems, required this.userCart});
+      {super.key,
+      required this.allMenuItems,
+      this.userCart,
+      required this.canteenId,
+      required this.canteenName});
 
   @override
   State<CanteenMenuView> createState() => _CanteenMenuViewState();
 }
 
 class _CanteenMenuViewState extends State<CanteenMenuView> {
+  late final FirebaseCanteenService _canteenService;
+
   @override
-  Widget build(BuildContext context) {
-    return MenuItemList(
-      menuItems: widget.allMenuItems,
-    );
+  void initState() {
+    _canteenService = FirebaseCanteenService();
+    super.initState();
   }
-}
-
-// TODO: create item desciption when ItemCallback is called ontap
-
-class MenuItemList extends StatelessWidget {
-  final Iterable<MenuItem> menuItems;
-
-  final FirebaseCanteenService _canteenService = FirebaseCanteenService();
-
-  MenuItemList({super.key, required this.menuItems});
 
   @override
   Widget build(BuildContext context) {
+    final Iterable<MenuItem> allMenuItems = widget.allMenuItems;
+    final String canteenId = widget.canteenId;
+    final String canteenName = widget.canteenName;
+    Cart userCart = widget.userCart ??
+        Cart(
+          cartItems: [],
+          canteenId: canteenId,
+          canteenName: canteenName,
+          id: _canteenService.userId!,
+          total: 0,
+        );
     return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 250, crossAxisSpacing: 50, mainAxisSpacing: 50),
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: MediaQuery.of(context).size.width * 0.4,
+          childAspectRatio: 1,
+          crossAxisSpacing: 50,
+          mainAxisSpacing: 50),
       padding: const EdgeInsets.all(24),
       physics: const BouncingScrollPhysics(),
       cacheExtent: 5,
-      itemCount: menuItems.length,
+      itemCount: allMenuItems.length,
       itemBuilder: (context, index) {
-        final menuItem = menuItems.elementAt(index);
+        final menuItem = allMenuItems.elementAt(index);
         return GestureDetector(
           child: MenuItemCard(
-              name: menuItem.name,
-              price: menuItem.price,
-              imageRef: _canteenService.getImageReference(
-                  imagePath: menuItem.imagePath)),
+            menuItem: menuItem,
+            imageRef: _canteenService.getImageReference(
+                imagePath: menuItem.imagePath),
+            userCart: userCart,
+            canteenId: canteenId,
+            onIconPress: (int incrementBy) {
+              _canteenService.addToCart(menuItem, incrementBy, canteenId,
+                  canteenName, userCart, context);
+            },
+          ),
           onTap: () {},
         );
       },
@@ -58,18 +75,34 @@ class MenuItemList extends StatelessWidget {
   }
 }
 
+// TODO: create item desciption when ItemCallback is called ontap
+
+typedef ItemToCartCallBack = void Function(int incrementBy);
+
 class MenuItemCard extends StatelessWidget {
-  final String name;
-  final int price;
+  final MenuItem menuItem;
   final Reference imageRef;
-  const MenuItemCard(
-      {super.key,
-      required this.name,
-      required this.price,
-      required this.imageRef});
+  final String canteenId;
+  final Cart userCart;
+  final ItemToCartCallBack onIconPress;
+
+  const MenuItemCard({
+    super.key,
+    required this.menuItem,
+    required this.imageRef,
+    required this.userCart,
+    required this.canteenId,
+    required this.onIconPress,
+  });
 
   @override
   Widget build(BuildContext context) {
+    int qty = userCart.cartItems
+        .where((element) => element.id == menuItem.id)
+        .fold<int>(
+            0, (previousValue, element) => previousValue + element.quantity);
+    print("quantity recorded");
+
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -85,7 +118,7 @@ class MenuItemCard extends StatelessWidget {
         children: [
           SizedBox(
             width: double.infinity,
-            height: 180,
+            height: 150,
             child: ClipRRect(
               borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(36),
@@ -105,30 +138,39 @@ class MenuItemCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
+                      maxLines: 2,
                       overflow: TextOverflow.clip,
-                      name,
-                      style: Theme.of(context).textTheme.labelLarge,
+                      menuItem.name,
+                      style: Theme.of(context).textTheme.labelMedium,
                     ),
                     const SizedBox(
                       height: 3.0,
                     ),
                     Text(
-                      '₹ $price',
+                      '₹ ${menuItem.price}',
                       style:
                           const TextStyle(fontSize: 11.5, color: Colors.grey),
                     )
                   ],
                 ),
-                Row(children: [
-                  IconButton(
-                    icon: const Icon(Icons.remove_circle_outline),
-                    onPressed: () {},
-                  ),
-                  const Text("1"),
-                  IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.add_circle_outline))
-                ])
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(
+                        Icons.remove_circle_outline,
+                      ),
+                      onPressed: () async {
+                        onIconPress(-1);
+                      },
+                    ),
+                    Text(qty.toString()),
+                    IconButton(
+                        onPressed: () {
+                          onIconPress(1);
+                        },
+                        icon: const Icon(Icons.add_circle_outline))
+                  ],
+                )
               ],
             ),
           )

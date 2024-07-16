@@ -6,14 +6,15 @@ import 'package:jevlis_ka/models/menu_item_model.dart';
 import 'package:jevlis_ka/services/auth/bloc/auth_bloc.dart';
 import 'package:jevlis_ka/services/auth/bloc/auth_event.dart';
 import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
-import 'package:jevlis_ka/views/canteen_menu_view.dart';
-import 'package:jevlis_ka/views/view_cart_view.dart';
+import 'package:jevlis_ka/views/USER/canteen_menu_view.dart';
+import 'package:jevlis_ka/views/USER/view_cart_view.dart';
 
 class UserHomeView extends StatefulWidget {
   final String canteenId;
-  final String name;
+  final String canteenName;
 
-  const UserHomeView({super.key, required this.canteenId, required this.name});
+  const UserHomeView(
+      {super.key, required this.canteenId, required this.canteenName});
 
   @override
   State<UserHomeView> createState() => _UserHomeViewState();
@@ -31,7 +32,9 @@ class _UserHomeViewState extends State<UserHomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> titles = ['Menu ${widget.name}', 'Your Cart'];
+    final List<String> titles = ['Menu ${widget.canteenName}', 'Your Cart'];
+    final String canteenId = widget.canteenId;
+    final String canteenName = widget.canteenName;
 
     return StreamBuilder(
         stream: _canteenService.getMenuItems(canteenId: widget.canteenId),
@@ -45,15 +48,25 @@ class _UserHomeViewState extends State<UserHomeView> {
                     final List<Widget> pages = [
                       // choose item screen
                       CanteenMenuView(
-                          allMenuItems:
-                              menuItemsSnapshot.data as Iterable<MenuItem>,
-                          userCart: Cart.fromSnapshot(cartSnapshot.data!)),
+                        allMenuItems:
+                            menuItemsSnapshot.data as Iterable<MenuItem>,
+                        userCart: cartSnapshot.data!.data() == null
+                            ? null
+                            : Cart.fromSnapshot(cartSnapshot.data!),
+                        canteenId: canteenId,
+                        canteenName: canteenName,
+                      ),
 
                       // cart screen
                       ViewCartView(
-                          allMenuItems:
-                              menuItemsSnapshot.data as Iterable<MenuItem>,
-                          userCart: Cart.fromSnapshot(cartSnapshot.data!)),
+                        allMenuItems:
+                            menuItemsSnapshot.data as Iterable<MenuItem>,
+                        userCart: cartSnapshot.data!.data() == null
+                            ? null
+                            : Cart.fromSnapshot(cartSnapshot.data!),
+                        canteenId: canteenId,
+                        canteenName: canteenName,
+                      ),
                     ];
                     return Scaffold(
                       appBar: AppBar(
@@ -64,7 +77,10 @@ class _UserHomeViewState extends State<UserHomeView> {
                         ),
                         elevation: 0,
                         leading: IconButton(
-                          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                          icon: const Icon(
+                            Icons.restaurant_menu,
+                            size: 30,
+                          ),
                           onPressed: () {
                             context
                                 .read<AuthBloc>()

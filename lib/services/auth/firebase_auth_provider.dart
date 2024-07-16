@@ -89,7 +89,9 @@ class FirebaseAuthProvider implements AuthProvider {
   Future<AuthUser> signInWithGoogle() async {
     try {
       final provider = GoogleAuthProvider();
-      provider.setCustomParameters({'prompt': 'select_account'});
+      //TODO: Uncomment this line
+
+      // provider.setCustomParameters({'prompt': 'select_account'});
       await FirebaseAuth.instance.signInWithPopup(provider);
       final user = currentUser;
       if (user != null) {

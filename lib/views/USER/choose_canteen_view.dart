@@ -1,25 +1,23 @@
 // ignore_for_file: avoid_print
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_ui_storage/firebase_ui_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jevlis_ka/models/canteen_model.dart';
-import 'package:jevlis_ka/services/auth/bloc/auth_bloc.dart';
-import 'package:jevlis_ka/services/auth/bloc/auth_event.dart';
 import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
 
-// ignore: must_be_immutable
+@immutable
 class CanteenCard extends StatelessWidget {
-  CanteenCard(
-      {super.key,
-      required this.name,
-      required this.imagePath,
-      required this.location,
-      required this.canteenService});
+  const CanteenCard({
+    super.key,
+    required this.name,
+    required this.location,
+    required this.imageRef,
+  });
   final String name;
-  final String imagePath;
   final String location;
-  FirebaseCanteenService canteenService;
+  final Reference imageRef;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +30,7 @@ class CanteenCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(36),
               child: StorageImage(
-                ref: canteenService.getImageReference(imagePath: imagePath),
+                ref: imageRef,
                 width: 300,
                 height: 200,
                 fit: BoxFit.cover,
@@ -111,14 +109,13 @@ class _ChooseCanteenViewState extends State<ChooseCanteenView> {
                     final canteen = allCanteens.elementAt(index);
                     return GestureDetector(
                       onTap: () {
-                        context.read<AuthBloc>().add(AuthEventCanteenSelected(
-                            canteenId: canteen.canteenId, name: canteen.name));
+                        context.go('');
                       },
                       child: CanteenCard(
                         name: canteen.name,
-                        imagePath: canteen.imagePath,
                         location: canteen.location,
-                        canteenService: _canteenService,
+                        imageRef: _canteenService.getImageReference(
+                            imagePath: canteen.imagePath),
                       ),
                     );
                   },

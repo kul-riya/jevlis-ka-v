@@ -8,9 +8,15 @@ class MenuItem {
   final int price;
   final String canteenId;
   final String imagePath;
+  final String category;
+  final bool isHidden;
+  final bool isVeg;
 
   const MenuItem(
-      {required this.imagePath,
+      {required this.category,
+      required this.isHidden,
+      required this.isVeg,
+      required this.imagePath,
       required this.id,
       required this.name,
       required this.price,
@@ -21,5 +27,18 @@ class MenuItem {
         name = snapshot.data()['name'],
         price = snapshot.data()['price'],
         canteenId = snapshot.data()['canteenId'],
-        imagePath = snapshot.data()['imagePath'];
+        imagePath = snapshot.data()['imagePath'],
+        category = snapshot.data()['category'],
+        isHidden = snapshot.data()['isHidden'],
+        isVeg = snapshot.data()['isVeg'];
+
+  Map<String, dynamic> toJson() => {
+        'canteenId': canteenId,
+        'category': category,
+        'imagePath': imagePath,
+        'isHidden': isHidden,
+        'isVeg': isVeg,
+        'price': price,
+        'name': name,
+      };
 }
