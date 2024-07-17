@@ -1,11 +1,10 @@
-// ignore_for_file: avoid_print
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_ui_storage/firebase_ui_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jevlis_ka/models/canteen_model.dart';
 import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
+import 'package:jevlis_ka/constants/routes.dart' show Constants;
 
 @immutable
 class CanteenCard extends StatelessWidget {
@@ -78,6 +77,7 @@ class _ChooseCanteenViewState extends State<ChooseCanteenView> {
 
   @override
   Widget build(BuildContext context) {
+    print(_canteenService.userId);
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -109,7 +109,8 @@ class _ChooseCanteenViewState extends State<ChooseCanteenView> {
                     final canteen = allCanteens.elementAt(index);
                     return GestureDetector(
                       onTap: () {
-                        context.go('');
+                        context.go(Constants().userHomeRoute(canteen.canteenId),
+                            extra: {'name': canteen.name});
                       },
                       child: CanteenCard(
                         name: canteen.name,

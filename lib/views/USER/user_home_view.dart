@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jevlis_ka/components/bottom_navbar_google.dart';
+import 'package:jevlis_ka/constants/routes.dart';
 import 'package:jevlis_ka/models/cart_model.dart';
 import 'package:jevlis_ka/models/menu_item_model.dart';
-import 'package:jevlis_ka/services/auth/bloc/auth_bloc.dart';
-import 'package:jevlis_ka/services/auth/bloc/auth_event.dart';
 import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
 import 'package:jevlis_ka/views/USER/canteen_menu_view.dart';
 import 'package:jevlis_ka/views/USER/view_cart_view.dart';
@@ -82,9 +81,7 @@ class _UserHomeViewState extends State<UserHomeView> {
                             size: 30,
                           ),
                           onPressed: () {
-                            context
-                                .read<AuthBloc>()
-                                .add(const AuthEventInitialize());
+                            context.go(Constants.chooseCanteenRoute);
                           },
                         ),
                       ),

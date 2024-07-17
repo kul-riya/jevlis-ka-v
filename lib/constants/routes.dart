@@ -9,23 +9,23 @@ class Constants {
 // Route String constants
   // UserApp
   static const String chooseCanteenRoute = '/choose-canteen';
-  static const String userHomeRoute = '/user-home/:canteenId';
+  String userHomeRoute(String canteenId) => '/user-home/$canteenId';
 
   // CanteenApp
   static const String canteenHomeRoute = '/canteen-home';
-  static const String editMenuItemRoute = 'edit-item/:itemId';
+  String editMenuItemRoute(String itemId) => 'edit-item/$itemId';
 }
 
 // GoRouters
 final userRouter = GoRouter(
-  initialLocation: Constants.canteenHomeRoute,
+  initialLocation: Constants.chooseCanteenRoute,
   routes: [
     GoRoute(
-        path: Constants.canteenHomeRoute,
+        path: Constants.chooseCanteenRoute,
         name: 'dis first',
         builder: (context, state) => const ChooseCanteenView()),
     GoRoute(
-      path: Constants.userHomeRoute,
+      path: Constants().userHomeRoute(':canteenId'),
       name: 'dis rest',
       builder: (context, state) => UserHomeView(
           canteenId: state.pathParameters['canteenId']!,
@@ -35,6 +35,7 @@ final userRouter = GoRouter(
 );
 
 final canteenAdminRouter = GoRouter(
+  initialLocation: Constants.canteenHomeRoute,
   routes: [
     GoRoute(
         path: Constants.canteenHomeRoute,
@@ -42,7 +43,7 @@ final canteenAdminRouter = GoRouter(
         builder: (context, state) => const CanteenHomeView(),
         routes: <RouteBase>[
           GoRoute(
-            path: Constants.editMenuItemRoute,
+            path: Constants().editMenuItemRoute(':itemId'),
             builder: (context, state) =>
                 EditMenuItemView(item: (state.extra as MenuItem)),
           ),

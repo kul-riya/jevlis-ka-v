@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:jevlis_ka/constants/json_string_keys.dart';
+import 'package:jevlis_ka/constants/json_string_constants.dart';
 import 'package:jevlis_ka/constants/routes.dart' show Constants;
 import 'package:jevlis_ka/models/canteen_model.dart';
 import 'package:jevlis_ka/models/cart_model.dart';
@@ -16,7 +16,7 @@ class FirebaseCanteenService {
   final usersCarts = FirebaseFirestore.instance.collection('UsersCarts');
   final users = FirebaseFirestore.instance.collection('Users');
 
-  final String? userId = FirebaseAuthProvider().currentUser?.uid;
+  String? get userId => FirebaseAuthProvider().currentUser?.uid;
 
 // Miscellaneous
 
@@ -105,8 +105,11 @@ class FirebaseCanteenService {
           .firstOrNull;
       if (cartItem == null) {
         incrementBy == 1
-            ? userCart.cartItems
-                .add(CartMenuItem(id: item.id, quantity: incrementBy))
+            ? userCart.cartItems.add(CartMenuItem(
+                id: item.id,
+                quantity: incrementBy,
+                name: item.name,
+                price: item.price))
             : null;
       } else {
         cartItem.quantity += incrementBy;
@@ -129,7 +132,7 @@ class FirebaseCanteenService {
     try {
       await usersCarts.doc(userCart.id).update({
         'cartItems': FieldValue.arrayRemove([cartItem.toJson()]),
-        'total': userCart.total - (item.price * cartItem.quantity)
+        'total': userCart.total - (cartItem.price * cartItem.quantity)
       });
     } catch (e) {
       throw CouldNotDeleteCartItemsException();

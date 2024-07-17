@@ -3,12 +3,26 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class CartMenuItem {
   final String id;
   int quantity;
+  final String name;
+  final double price;
 
-  CartMenuItem({required this.id, required this.quantity});
+  CartMenuItem(
+      {required this.name,
+      required this.price,
+      required this.id,
+      required this.quantity});
+
+  CartMenuItem.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        name = json['name'],
+        price = json['price'],
+        quantity = json['quantity'];
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'quantity': quantity,
+        'name': name,
+        'price': price,
       };
 }
 
@@ -32,12 +46,7 @@ class Cart {
         canteenName = snapshot['canteenName'],
         total = snapshot['total'],
         cartItems = (snapshot['cartItems'] as Iterable<dynamic>)
-            .map(
-              (item) => CartMenuItem(
-                id: item['id'],
-                quantity: item['quantity'],
-              ),
-            )
+            .map((item) => CartMenuItem.fromJson(item))
             .toList();
 
   Map<String, dynamic> toJson() => {

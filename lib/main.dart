@@ -1,26 +1,28 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:jevlis_ka/constants/routes.dart';
 import 'package:jevlis_ka/services/auth/bloc/auth_bloc.dart';
 import 'package:jevlis_ka/services/auth/bloc/auth_event.dart';
 import 'package:jevlis_ka/services/auth/bloc/auth_state.dart';
 import 'package:jevlis_ka/services/auth/firebase_auth_provider.dart';
 import 'package:jevlis_ka/theme/theme.dart';
-import 'package:jevlis_ka/views/ADMIN/canteen_home_view.dart';
-import 'package:jevlis_ka/views/USER/choose_canteen_view.dart';
 import 'package:jevlis_ka/views/USER/login_view.dart';
 import 'package:jevlis_ka/views/USER/register_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    title: 'Jevlis ka?',
-    theme: mainTheme,
-    home: BlocProvider<AuthBloc>(
-      create: (context) => AuthBloc(FirebaseAuthProvider()),
-      child: const AuthApp(),
+  print("this is main");
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Jevlis ka?',
+      theme: mainTheme,
+      home: BlocProvider<AuthBloc>(
+        create: (context) => AuthBloc(FirebaseAuthProvider()),
+        child: const AuthApp(),
+      ),
     ),
-  ));
+  );
 }
 
 class AuthApp extends StatelessWidget {
@@ -29,6 +31,7 @@ class AuthApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<AuthBloc>().add(const AuthEventInitialize());
+    print("this is auth app");
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthStateLoggedInUser) {
@@ -56,7 +59,12 @@ class UserApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ChooseCanteenView();
+    print("this is user app");
+    return MaterialApp.router(
+      routerConfig: userRouter,
+      theme: mainTheme,
+      title: "Jevlis Ka?",
+    );
   }
 }
 
@@ -65,6 +73,12 @@ class CanteenApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const CanteenHomeView();
+    print("this is canteen app");
+
+    return MaterialApp.router(
+      theme: mainTheme,
+      routerConfig: canteenAdminRouter,
+      title: "Jevlis Ka - Canteen Admin App",
+    );
   }
 }

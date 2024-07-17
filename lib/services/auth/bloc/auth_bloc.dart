@@ -14,7 +14,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (user == null) {
           emit(const AuthStateLoggedOut(exception: null));
         } else {
-          emit(AuthStateLoggedInUser(user: user));
+          final FirebaseCanteenService canteenService =
+              FirebaseCanteenService();
+
+          if (await canteenService.getAdminCanteenId(uid: user.uid)) {
+            emit(AuthStateLoggedInCanteen(user: user));
+          } else {
+            emit(AuthStateLoggedInUser(user: user));
+          }
         }
       },
     );
