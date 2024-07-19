@@ -3,7 +3,6 @@ import 'package:firebase_ui_storage/firebase_ui_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:jevlis_ka/models/cart_model.dart';
 import 'package:jevlis_ka/models/menu_item_model.dart';
-import 'package:jevlis_ka/services/cloud/admin_canteen_service.dart';
 import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
 
 class ViewCartView extends StatefulWidget {
@@ -24,7 +23,6 @@ class ViewCartView extends StatefulWidget {
 
 class _ViewCartViewState extends State<ViewCartView> {
   late final FirebaseCanteenService _canteenService;
-  late final FirebaseAdminService _adminService;
 
   @override
   void initState() {
@@ -125,8 +123,7 @@ class _ViewCartViewState extends State<ViewCartView> {
                           borderRadius: BorderRadius.circular(24),
                           child: ElevatedButton(
                             onPressed: () async {
-                              _adminService = FirebaseAdminService();
-                              await _adminService.placeOrder(
+                              await _canteenService.placeOrder(
                                   userCart: userCart);
                               return showDialog(
                                   context: context,

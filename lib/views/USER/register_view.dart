@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jevlis_ka/services/auth/bloc/auth_bloc.dart';
 import 'package:jevlis_ka/services/auth/bloc/auth_event.dart';
-import 'package:jevlis_ka/utilities/registration_screens/register_login_button.dart';
-import 'package:jevlis_ka/utilities/registration_screens/register_text_field.dart';
+import 'package:jevlis_ka/components/registration_screens/register_login_button.dart';
+import 'package:jevlis_ka/components/registration_screens/register_text_field.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});

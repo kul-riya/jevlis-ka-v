@@ -3,27 +3,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class OrderItem {
   final String id;
   final String name;
-  final double pricePerUnit;
+  final double price;
   final int quantity;
 
   OrderItem(
       {required this.id,
       required this.name,
-      required this.pricePerUnit,
+      required this.price,
       required this.quantity});
 
   OrderItem.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         name = json['name'],
-        pricePerUnit = json['pricePerUnit'],
+        price = json['price'],
         quantity = json['quantity'];
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'pricePerUnit': pricePerUnit,
-        'quantity': quantity
-      };
+  Map<String, dynamic> toJson() =>
+      {'id': id, 'name': name, 'price': price, 'quantity': quantity};
 }
 
 class CanteenOrder {

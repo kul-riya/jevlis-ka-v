@@ -1,35 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jevlis_ka/constants/json_string_constants.dart';
-import 'package:jevlis_ka/models/cart_model.dart';
-import 'package:jevlis_ka/services/cloud/cloud_storage_exceptions.dart';
+import 'package:jevlis_ka/models/order_model.dart';
 
 class FirebaseAdminService {
   final orders = FirebaseFirestore.instance.collection('Orders');
-  final usersCarts = FirebaseFirestore.instance.collection('UsersCarts');
+  final users = FirebaseFirestore.instance.collection('Users');
 
-  Future<void> placeOrder({required Cart userCart}) async {
-    final Map<String, dynamic> canteenOrderData = {
-      'canteenId': userCart.canteenId,
-      'canteenName': userCart.canteenName,
-      'orderStatus': orderPlaced,
-      'orderPlacingTime': DateTime.now(),
-      'orderItems': userCart.cartItems.map((cartItem) => cartItem.toJson()),
-      'userId': userCart.id,
-      'totalPrice': userCart.total,
-    };
+  final String adminCanteenId = 'adminCanteenId';
 
-    print(canteenOrderData);
+  Future<String> getAdminCanteenId({required String uid}) async {
+    DocumentSnapshot snapshot = await users.doc(uid).get();
+    return snapshot[adminCanteenId];
+  }
 
-    try {
-      await orders.doc().set(canteenOrderData);
-    } catch (e) {
-      throw CouldNotPlaceOrderException();
-    }
-    try {
-      await usersCarts.doc(userCart.id).delete();
-    } catch (e) {
-      throw CouldNotDeleteCartException();
-    }
+  Stream<Iterable<CanteenOrder>> getOrders({required String adminCanteenId}) =>
+      orders.snapshots().map((event) => event.docs
+          .map((doc) => CanteenOrder.fromSnapshot(doc))
+          .where((order) => order.canteenId == adminCanteenId));
+
+  Future<void> makeOrderReady({required String orderId}) async {
+    await orders.doc(orderId).update({'orderStatus': orderReady});
+  }
+
+  Future<void> makeOrderCancel({required String orderId}) async {
+    await orders.doc(orderId).update({'orderStatus': orderCancelled});
   }
 
   static final FirebaseAdminService _shared =

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:jevlis_ka/models/menu_item_model.dart';
 
 class EditMenuItemView extends StatefulWidget {
-  final MenuItem item;
-  const EditMenuItemView({super.key, required this.item});
+  const EditMenuItemView({super.key});
 
   @override
   State<EditMenuItemView> createState() => _EditMenuItemViewState();

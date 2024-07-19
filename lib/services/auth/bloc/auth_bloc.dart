@@ -17,7 +17,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           final FirebaseCanteenService canteenService =
               FirebaseCanteenService();
 
-          if (await canteenService.getAdminCanteenId(uid: user.uid)) {
+          if (await canteenService.getAdminCanteenId(uid: user.uid) != null) {
             emit(AuthStateLoggedInCanteen(user: user));
           } else {
             emit(AuthStateLoggedInUser(user: user));
@@ -35,7 +35,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         try {
           final user = await provider.userLogIn(
               email: event.email, password: event.password);
-          if (await canteenService.getAdminCanteenId(uid: user.uid)) {
+          if (await canteenService.getAdminCanteenId(uid: user.uid) != null) {
             emit(AuthStateLoggedInCanteen(user: user));
           } else {
             emit(AuthStateLoggedInUser(user: user));
@@ -55,7 +55,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         try {
           final user = await provider.signInWithGoogle();
 
-          if (await canteenService.getAdminCanteenId(uid: user.uid)) {
+          if (await canteenService.getAdminCanteenId(uid: user.uid) != null) {
             emit(AuthStateLoggedInCanteen(user: user));
           } else {
             emit(AuthStateLoggedInUser(user: user));

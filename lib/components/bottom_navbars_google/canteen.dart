@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
-class MyGBottomNavBar extends StatelessWidget {
+class GBottomNavBarCanteen extends StatelessWidget {
   final void Function(int)? onTabChange;
-  const MyGBottomNavBar({super.key, required this.onTabChange});
+  const GBottomNavBarCanteen({super.key, required this.onTabChange});
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +24,16 @@ class MyGBottomNavBar extends StatelessWidget {
           onTabChange: onTabChange,
           tabs: const [
             GButton(
-              icon: Icons.home_rounded,
-              text: 'Order',
+              icon: Icons.list_rounded,
+              text: 'Order Log',
             ),
             GButton(
-              icon: Icons.shopping_cart_rounded,
-              text: 'Cart',
+              icon: Icons.fastfood,
+              text: 'Edit Menu',
+            ),
+            GButton(
+              icon: Icons.history_rounded,
+              text: 'Order History',
             )
           ],
         ),

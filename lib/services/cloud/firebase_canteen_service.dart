@@ -15,8 +15,10 @@ class FirebaseCanteenService {
   final menuItems = FirebaseFirestore.instance.collection('MenuItems');
   final usersCarts = FirebaseFirestore.instance.collection('UsersCarts');
   final users = FirebaseFirestore.instance.collection('Users');
+  final orders = FirebaseFirestore.instance.collection('Orders');
 
   String? get userId => FirebaseAuthProvider().currentUser?.uid;
+  final String adminCanteenId = 'adminCanteenId';
 
 // Miscellaneous
 
@@ -25,9 +27,9 @@ class FirebaseCanteenService {
       FirebaseStorage.instance.ref(imagePath);
 
   // return false if logged in user is NOT an admin, and true if logged in user is consumer
-  Future<bool> getAdminCanteenId({required String uid}) async {
+  Future<String?> getAdminCanteenId({required String uid}) async {
     DocumentSnapshot snapshot = await users.doc(uid).get();
-    return snapshot[adminCanteenId] == null ? false : true;
+    return snapshot[adminCanteenId];
   }
 
   // adds consumer users to firebase on email registration
@@ -132,10 +134,33 @@ class FirebaseCanteenService {
     try {
       await usersCarts.doc(userCart.id).update({
         'cartItems': FieldValue.arrayRemove([cartItem.toJson()]),
-        'total': userCart.total - (cartItem.price * cartItem.quantity)
+        'total': userCart.total - (item.price * cartItem.quantity)
       });
     } catch (e) {
       throw CouldNotDeleteCartItemsException();
+    }
+  }
+
+  // on checkout
+  Future<void> placeOrder({required Cart userCart}) async {
+    final Map<String, dynamic> canteenOrderData = {
+      'canteenId': userCart.canteenId,
+      'canteenName': userCart.canteenName,
+      'orderStatus': orderPlaced,
+      'orderPlacingTime': DateTime.now(),
+      'orderItems': userCart.cartItems.map((cartItem) => cartItem.toJson()),
+      'userId': userCart.id,
+      'totalPrice': userCart.total,
+    };
+    try {
+      await orders.doc().set(canteenOrderData);
+    } catch (e) {
+      throw CouldNotPlaceOrderException();
+    }
+    try {
+      await usersCarts.doc(userCart.id).delete();
+    } catch (e) {
+      throw CouldNotDeleteCartException();
     }
   }
 

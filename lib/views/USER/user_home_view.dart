@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:jevlis_ka/components/bottom_navbar_google.dart';
+import 'package:jevlis_ka/components/bottom_navbars_google/user.dart';
 import 'package:jevlis_ka/constants/routes.dart';
 import 'package:jevlis_ka/models/cart_model.dart';
 import 'package:jevlis_ka/models/menu_item_model.dart';
@@ -43,26 +43,25 @@ class _UserHomeViewState extends State<UserHomeView> {
                 stream: _canteenService.getCart(),
                 builder: (context, cartSnapshot) {
                   if (cartSnapshot.hasData) {
+                    final allMenuItems =
+                        menuItemsSnapshot.data as Iterable<MenuItem>;
+                    final Cart? userCart = cartSnapshot.data!.data() == null
+                        ? null
+                        : Cart.fromSnapshot(cartSnapshot.data!);
                     // build the pages
                     final List<Widget> pages = [
                       // choose item screen
                       CanteenMenuView(
-                        allMenuItems:
-                            menuItemsSnapshot.data as Iterable<MenuItem>,
-                        userCart: cartSnapshot.data!.data() == null
-                            ? null
-                            : Cart.fromSnapshot(cartSnapshot.data!),
+                        allMenuItems: allMenuItems,
+                        userCart: userCart,
                         canteenId: canteenId,
                         canteenName: canteenName,
                       ),
 
                       // cart screen
                       ViewCartView(
-                        allMenuItems:
-                            menuItemsSnapshot.data as Iterable<MenuItem>,
-                        userCart: cartSnapshot.data!.data() == null
-                            ? null
-                            : Cart.fromSnapshot(cartSnapshot.data!),
+                        allMenuItems: allMenuItems,
+                        userCart: userCart,
                         canteenId: canteenId,
                         canteenName: canteenName,
                       ),
@@ -86,7 +85,7 @@ class _UserHomeViewState extends State<UserHomeView> {
                         ),
                       ),
                       body: pages[_selectedpage],
-                      bottomNavigationBar: MyGBottomNavBar(
+                      bottomNavigationBar: GBottomNavBarUser(
                         onTabChange: (index) {
                           setState(() {
                             _selectedpage = index;

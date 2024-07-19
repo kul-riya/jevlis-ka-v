@@ -6,6 +6,8 @@ class AuthUser {
   const AuthUser({required this.uid});
 
   factory AuthUser.fromFirebase(User user) {
-    return AuthUser(uid: user.uid);
+    return AuthUser(
+      uid: user.uid,
+    );
   }
 }
