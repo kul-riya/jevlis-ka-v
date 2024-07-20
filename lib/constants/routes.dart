@@ -39,11 +39,12 @@ final canteenAdminRouter = GoRouter(
   routes: [
     GoRoute(
         path: Constants.canteenHomeRoute,
-        name: 'home screen',
+        name: 'home-screen',
         builder: (context, state) => const CanteenHomeView(),
         routes: <RouteBase>[
           GoRoute(
             path: Constants().editMenuItemRoute(':itemId'),
+            name: "edit-item",
             builder: (context, state) =>
                 CreateUpdateItemView(item: (state.extra as MenuItem)),
           ),

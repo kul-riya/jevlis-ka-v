@@ -11,23 +11,25 @@ ThemeData mainTheme = ThemeData(
       tertiary: Colors.white24),
   useMaterial3: false,
   textTheme: const TextTheme(
-      displaySmall: TextStyle(
-          fontWeight: FontWeight.w100,
-          fontFamily: 'Sunborn',
-          fontSize: 28,
-          color: Colors.black87),
-      titleLarge: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontFamily: 'Sunborn',
-          color: Colors.black),
-      labelLarge: TextStyle(fontWeight: FontWeight.w900, fontSize: 16.0),
-      headlineSmall: TextStyle(
+    displaySmall: TextStyle(
+        fontWeight: FontWeight.w100,
+        fontFamily: 'Sunborn',
+        fontSize: 28,
+        color: Colors.black87),
+    titleLarge: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontFamily: 'Sunborn',
+        color: Colors.black),
+    labelLarge: TextStyle(fontWeight: FontWeight.w900, fontSize: 16.0),
+    headlineSmall: TextStyle(
+      color: Colors.white,
+    ),
+    headlineMedium: TextStyle(
         color: Colors.white,
-      ),
-      headlineMedium: TextStyle(
-          color: Colors.white,
-          fontFamily: 'Sunborn',
-          fontWeight: FontWeight.w100),
-      labelSmall: TextStyle(color: Colors.white, fontWeight: FontWeight.w900),
-      labelMedium: TextStyle(fontWeight: FontWeight.w400)),
+        fontFamily: 'Sunborn',
+        fontWeight: FontWeight.w100),
+    labelSmall: TextStyle(color: Colors.white, fontWeight: FontWeight.w900),
+    labelMedium: TextStyle(fontWeight: FontWeight.w400),
+    bodyLarge: TextStyle(color: Colors.deepOrange, fontWeight: FontWeight.w300),
+  ),
 );

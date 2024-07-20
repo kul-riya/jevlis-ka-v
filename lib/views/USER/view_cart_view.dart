@@ -3,7 +3,7 @@ import 'package:firebase_ui_storage/firebase_ui_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:jevlis_ka/models/cart_model.dart';
 import 'package:jevlis_ka/models/menu_item_model.dart';
-import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
+import 'package:jevlis_ka/services/cloud/firebase_cart_service.dart';
 
 class ViewCartView extends StatefulWidget {
   final Iterable<MenuItem> allMenuItems;
@@ -22,11 +22,11 @@ class ViewCartView extends StatefulWidget {
 }
 
 class _ViewCartViewState extends State<ViewCartView> {
-  late final FirebaseCanteenService _canteenService;
+  late final FirebaseCartService _cartService;
 
   @override
   void initState() {
-    _canteenService = FirebaseCanteenService();
+    _cartService = FirebaseCartService();
     super.initState();
   }
 
@@ -39,7 +39,7 @@ class _ViewCartViewState extends State<ViewCartView> {
             cartItems: [],
             canteenId: widget.canteenId,
             canteenName: widget.canteenName,
-            id: _canteenService.userId!,
+            id: _cartService.userId!,
             total: 0);
     final cartItems = userCart.cartItems;
     return Scaffold(
@@ -58,11 +58,13 @@ class _ViewCartViewState extends State<ViewCartView> {
                             .where((menuItem) => menuItem.id == cartItem.id)
                             .first;
                         return CartItemWidget(
+                          imageRef: _cartService.getImageReference(
+                              imagePath: menuItem.imagePath),
                           cartItem: cartItem,
                           menuItem: menuItem,
                           userCart: userCart,
                           onIconPress: (int incrementBy) {
-                            _canteenService.addToCart(
+                            _cartService.addToCart(
                                 menuItem,
                                 incrementBy,
                                 canteenId,
@@ -71,7 +73,7 @@ class _ViewCartViewState extends State<ViewCartView> {
                                 context);
                           },
                           onDelete: () {
-                            _canteenService.deleteFromCart(menuItem, userCart);
+                            _cartService.deleteFromCart(menuItem, userCart);
                           },
                         );
                       },
@@ -123,8 +125,7 @@ class _ViewCartViewState extends State<ViewCartView> {
                           borderRadius: BorderRadius.circular(24),
                           child: ElevatedButton(
                             onPressed: () async {
-                              await _canteenService.placeOrder(
-                                  userCart: userCart);
+                              await _cartService.placeOrder(userCart: userCart);
                               return showDialog(
                                   context: context,
                                   builder: (context) {
@@ -163,6 +164,7 @@ class CartItemWidget extends StatelessWidget {
   final CartMenuItem cartItem;
   final MenuItem menuItem;
   final Cart userCart;
+  final Reference imageRef;
   final ItemToCartCallBack onIconPress;
   final VoidCallback onDelete;
 
@@ -172,7 +174,8 @@ class CartItemWidget extends StatelessWidget {
       required this.menuItem,
       required this.userCart,
       required this.onIconPress,
-      required this.onDelete});
+      required this.onDelete,
+      required this.imageRef});
 
   @override
   Widget build(BuildContext context) {
@@ -193,7 +196,7 @@ class CartItemWidget extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: StorageImage(
-              ref: FirebaseStorage.instance.ref(menuItem.imagePath),
+              ref: imageRef,
               fit: BoxFit.cover,
             ),
           ),

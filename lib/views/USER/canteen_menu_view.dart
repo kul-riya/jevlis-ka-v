@@ -3,7 +3,7 @@ import 'package:firebase_ui_storage/firebase_ui_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:jevlis_ka/models/cart_model.dart';
 import 'package:jevlis_ka/models/menu_item_model.dart';
-import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
+import 'package:jevlis_ka/services/cloud/firebase_cart_service.dart';
 
 class CanteenMenuView extends StatefulWidget {
   final String canteenId;
@@ -23,17 +23,18 @@ class CanteenMenuView extends StatefulWidget {
 }
 
 class _CanteenMenuViewState extends State<CanteenMenuView> {
-  late final FirebaseCanteenService _canteenService;
+  late final FirebaseCartService _cartService;
 
   @override
   void initState() {
-    _canteenService = FirebaseCanteenService();
+    _cartService = FirebaseCartService();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final Iterable<MenuItem> allMenuItems = widget.allMenuItems;
+    final List<MenuItem> allMenuItems = widget.allMenuItems.toList();
+    allMenuItems.removeWhere((menuItem) => menuItem.isHidden);
     final String canteenId = widget.canteenId;
     final String canteenName = widget.canteenName;
     Cart userCart = widget.userCart ??
@@ -41,13 +42,13 @@ class _CanteenMenuViewState extends State<CanteenMenuView> {
           cartItems: [],
           canteenId: canteenId,
           canteenName: canteenName,
-          id: _canteenService.userId!,
+          id: _cartService.userId!,
           total: 0,
         );
     return GridView.builder(
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: MediaQuery.of(context).size.width * 0.4,
-          childAspectRatio: 1,
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 300,
+          childAspectRatio: 1.15,
           crossAxisSpacing: 50,
           mainAxisSpacing: 50),
       padding: const EdgeInsets.all(24),
@@ -59,12 +60,12 @@ class _CanteenMenuViewState extends State<CanteenMenuView> {
         return GestureDetector(
           child: MenuItemCard(
             menuItem: menuItem,
-            imageRef: _canteenService.getImageReference(
-                imagePath: menuItem.imagePath),
+            imageRef:
+                _cartService.getImageReference(imagePath: menuItem.imagePath),
             userCart: userCart,
             canteenId: canteenId,
             onIconPress: (int incrementBy) {
-              _canteenService.addToCart(menuItem, incrementBy, canteenId,
+              _cartService.addToCart(menuItem, incrementBy, canteenId,
                   canteenName, userCart, context);
             },
           ),
@@ -103,80 +104,85 @@ class MenuItemCard extends StatelessWidget {
             0, (previousValue, element) => previousValue + element.quantity);
     print("quantity recorded");
 
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(36), topRight: Radius.circular(36.0)),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black26, blurRadius: 2.0, offset: Offset(3, 3)),
-        ],
-      ),
-      child: Column(
-        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          SizedBox(
-            width: double.infinity,
-            height: 150,
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(36),
-                  topRight: Radius.circular(36.0)),
-              child: StorageImage(
-                ref: imageRef,
-                fit: BoxFit.cover,
+    return LayoutBuilder(builder: (context, constraints) {
+      return Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(36), topRight: Radius.circular(36.0)),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black26, blurRadius: 2.0, offset: Offset(3, 3)),
+          ],
+        ),
+        child: Column(
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: constraints.biggest.height * 0.7,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(36),
+                    topRight: Radius.circular(36.0)),
+                child: StorageImage(
+                  ref: imageRef,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      maxLines: 2,
-                      overflow: TextOverflow.clip,
-                      menuItem.name,
-                      style: Theme.of(context).textTheme.labelMedium,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          maxLines: 2,
+                          overflow: TextOverflow.clip,
+                          menuItem.name,
+                          style: Theme.of(context).textTheme.labelMedium,
+                        ),
+                        const SizedBox(
+                          height: 3.0,
+                        ),
+                        Text(
+                          '₹ ${menuItem.price}',
+                          style: const TextStyle(
+                              fontSize: 11.5, color: Colors.grey),
+                        )
+                      ],
                     ),
-                    const SizedBox(
-                      height: 3.0,
-                    ),
-                    Text(
-                      '₹ ${menuItem.price}',
-                      style:
-                          const TextStyle(fontSize: 11.5, color: Colors.grey),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.remove_circle_outline,
+                          ),
+                          onPressed: () async {
+                            onIconPress(-1);
+                          },
+                        ),
+                        Text(qty.toString()),
+                        IconButton(
+                            onPressed: () {
+                              onIconPress(1);
+                            },
+                            icon: const Icon(Icons.add_circle_outline))
+                      ],
                     )
                   ],
                 ),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(
-                        Icons.remove_circle_outline,
-                      ),
-                      onPressed: () async {
-                        onIconPress(-1);
-                      },
-                    ),
-                    Text(qty.toString()),
-                    IconButton(
-                        onPressed: () {
-                          onIconPress(1);
-                        },
-                        icon: const Icon(Icons.add_circle_outline))
-                  ],
-                )
-              ],
+              ),
             ),
-          )
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 }
 

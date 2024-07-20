@@ -84,15 +84,19 @@ class _ChooseCanteenViewState extends State<ChooseCanteenView> {
         backgroundColor: Theme.of(context).colorScheme.background,
         centerTitle: true,
         elevation: 0,
-        title: Image.asset(
-          '/home/kul-riya/Developer/Flutter/jevlis_ka/lib/assets/images/hat_logo_white-removebg-preview.png',
+        title: StorageImage(
+          ref: _canteenService.getImageReference(
+              imagePath:
+                  "gs://jevlis-ka-part2.appspot.com/hat_logo_white-removebg-preview.png"),
           fit: BoxFit.contain,
           height: 65,
         ),
+        // Image.asset(
+        //   '/home/kul-riya/Developer/Flutter/jevlis_ka/lib/assets/images/hat_logo_white-removebg-preview.png',
+        //   fit: BoxFit.contain,
+        //   height: 65,
+        // ),
         toolbarHeight: 65,
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.person_sharp))
-        ],
       ),
       body: StreamBuilder(
         stream: _canteenService.getCanteens(),

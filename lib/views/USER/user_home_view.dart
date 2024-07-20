@@ -6,6 +6,8 @@ import 'package:jevlis_ka/models/cart_model.dart';
 import 'package:jevlis_ka/models/menu_item_model.dart';
 import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
 import 'package:jevlis_ka/views/USER/canteen_menu_view.dart';
+import 'package:jevlis_ka/views/USER/favourites_view.dart';
+import 'package:jevlis_ka/views/USER/profile_view.dart';
 import 'package:jevlis_ka/views/USER/view_cart_view.dart';
 
 class UserHomeView extends StatefulWidget {
@@ -31,7 +33,12 @@ class _UserHomeViewState extends State<UserHomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> titles = ['Menu ${widget.canteenName}', 'Your Cart'];
+    final List<String> titles = [
+      'Menu ${widget.canteenName}',
+      'Your Cart',
+      'Favourites',
+      'Profile'
+    ];
     final String canteenId = widget.canteenId;
     final String canteenName = widget.canteenName;
 
@@ -65,6 +72,8 @@ class _UserHomeViewState extends State<UserHomeView> {
                         canteenId: canteenId,
                         canteenName: canteenName,
                       ),
+                      const FavouritesView(),
+                      const ProfileView(),
                     ];
                     return Scaffold(
                       appBar: AppBar(

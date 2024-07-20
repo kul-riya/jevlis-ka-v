@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jevlis_ka/constants/json_string_constants.dart';
 import 'package:jevlis_ka/models/order_model.dart';
-import 'package:jevlis_ka/services/cloud/admin_canteen_service.dart';
+import 'package:jevlis_ka/services/cloud/firebase_admin_service.dart';
 
 class OrderLogView extends StatefulWidget {
   final String adminCanteenId;
@@ -30,11 +30,11 @@ class _OrderLogViewState extends State<OrderLogView> {
           allOrders.removeWhere((order) =>
               order.orderStatus == orderReady ||
               order.orderStatus == orderCancelled);
-          print("orders recorded");
+          allOrders
+              .sort((b, a) => a.orderPlacingTime.compareTo(b.orderPlacingTime));
+
+          // print("orders recorded");
           return Scaffold(
-            appBar: AppBar(
-              title: const Text("Order log"),
-            ),
             body: ListView.builder(
               itemCount: allOrders.length,
               itemBuilder: (context, index) {
@@ -76,13 +76,15 @@ class OrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 12,
+      margin: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
       color: Colors.white,
       shadowColor: Colors.black26,
       child: Column(
         children: [
           Padding(
             padding:
-                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -98,7 +100,7 @@ class OrderCard extends StatelessWidget {
                         Icons.check_box,
                       ),
                       color: Colors.green,
-                      padding: const EdgeInsets.all(5.0),
+                      padding: const EdgeInsets.only(right: 5.0),
                     ),
                     IconButton.filled(
                       onPressed: onCancel,
@@ -106,57 +108,105 @@ class OrderCard extends StatelessWidget {
                         Icons.indeterminate_check_box,
                       ),
                       color: Colors.red,
-                      padding: const EdgeInsets.all(5.0),
+                      padding: const EdgeInsets.only(right: 10.0),
                     )
                   ],
                 ),
               ],
             ),
           ),
-          Column(children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Text(
-                  "Name",
-                  style: Theme.of(context).textTheme.labelMedium,
-                  textAlign: TextAlign.left,
-                ),
-                Text(
-                  "Qty",
-                  style: Theme.of(context).textTheme.labelMedium,
-                  textAlign: TextAlign.left,
-                ),
-                Text(
-                  "Price",
-                  style: Theme.of(context).textTheme.labelMedium,
-                  textAlign: TextAlign.left,
-                ),
-              ],
-            ),
-            Column(
-              children: [
-                Container(
-                    constraints: const BoxConstraints(maxHeight: 200),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: order.orderItems.length,
-                      itemBuilder: (context, index) {
-                        final orderItem = order.orderItems[index];
-                        return Row(
-                          children: [
-                            Text("${(index + 1).toString()}.  "),
-                            Text(orderItem.name),
-                            Text(orderItem.quantity.toString()),
-                            const Text("X"),
-                            Text("₹ ${orderItem.price.toString()}")
-                          ],
-                        );
-                      },
-                    )),
-              ],
-            )
-          ])
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ["Name", "0.40"],
+                  ["Qty", "0.15"],
+                  ["Price Per Item", "0.15"]
+                ].map((header) {
+                  final itemWidth = double.parse(header[1]);
+                  return SizedBox(
+                    width: MediaQuery.of(context).size.width * itemWidth,
+                    child: Text(
+                      header[0],
+                      style: Theme.of(context).textTheme.labelMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                }).toList(),
+              ),
+              const Divider(),
+              Column(
+                children: [
+                  Container(
+                      // padding: const EdgeInsets.only(bottom: 12),
+                      constraints: const BoxConstraints(maxHeight: 200),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: order.orderItems.length,
+                        itemBuilder: (context, index) {
+                          final orderItem = order.orderItems[index];
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.40,
+                                  child: Row(
+                                    children: [
+                                      Text("${(index + 1).toString()}.   "),
+                                      Flexible(
+                                        child: Text(
+                                          orderItem.name,
+                                          softWrap: true,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.15,
+                                    child: Text(
+                                      orderItem.quantity.toString(),
+                                      textAlign: TextAlign.center,
+                                    )),
+                                SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.15,
+                                    child: Text(
+                                      "₹ ${orderItem.price.toString()}",
+                                      textAlign: TextAlign.center,
+                                    ))
+                              ],
+                            ),
+                          );
+                        },
+                      )),
+                  const Divider(),
+                  SizedBox(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          top: 6.0, bottom: 8.0, right: 12.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            "Total Price: ${order.totalPrice}",
+                            style: Theme.of(context).textTheme.labelLarge,
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              )
+            ]),
+          )
         ],
       ),
     );

@@ -19,3 +19,6 @@ class CouldNotDeleteCartItemsException extends CloudStorageException {}
 // CRUD Orders
 
 class CouldNotPlaceOrderException extends CloudStorageException {}
+
+// CRUD items
+class CouldNotDeleteItemException extends CloudStorageException {}
