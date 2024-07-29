@@ -42,4 +42,9 @@ class AuthService implements AuthProvider {
   Future<AuthUser> signInWithGoogle() async {
     return provider.signInWithGoogle();
   }
+
+  @override
+  Future<AuthUser> signInWithPhoneNumber({required String phoneNumber}) {
+    return provider.signInWithPhoneNumber(phoneNumber: phoneNumber);
+  }
 }

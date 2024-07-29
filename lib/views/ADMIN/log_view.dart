@@ -27,9 +27,7 @@ class _OrderLogViewState extends State<OrderLogView> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final allOrders = (snapshot.data!.toList());
-          allOrders.removeWhere((order) =>
-              order.orderStatus == orderReady ||
-              order.orderStatus == orderCancelled);
+          allOrders.removeWhere((order) => order.orderStatus != orderPlaced);
           allOrders
               .sort((b, a) => a.orderPlacingTime.compareTo(b.orderPlacingTime));
 
@@ -42,10 +40,12 @@ class _OrderLogViewState extends State<OrderLogView> {
                 return OrderCard(
                     order: order,
                     onReady: () async {
-                      await _adminService.makeOrderReady(orderId: order.id);
+                      await _adminService.updateOrderStatus(
+                          orderId: order.id, orderStatus: orderReady);
                     },
                     onCancel: () async {
-                      await _adminService.makeOrderCancel(orderId: order.id);
+                      await _adminService.updateOrderStatus(
+                          orderId: order.id, orderStatus: orderCancelled);
                     });
               },
             ),
@@ -62,7 +62,7 @@ class _OrderLogViewState extends State<OrderLogView> {
 
 typedef VoidCallback = void Function();
 
-class OrderCard extends StatelessWidget {
+class OrderCard extends StatefulWidget {
   final CanteenOrder order;
   final VoidCallback onReady;
   final VoidCallback onCancel;
@@ -74,7 +74,13 @@ class OrderCard extends StatelessWidget {
       required this.onCancel});
 
   @override
+  State<OrderCard> createState() => _OrderCardState();
+}
+
+class _OrderCardState extends State<OrderCard> {
+  @override
   Widget build(BuildContext context) {
+    final orderItems = widget.order.orderItems;
     return Card(
       elevation: 12,
       margin: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
@@ -84,26 +90,26 @@ class OrderCard extends StatelessWidget {
         children: [
           Padding(
             padding:
-                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 2.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "OrderID:   ${order.id}",
+                  "OrderID:   ${widget.order.id}",
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
                 Row(
                   children: [
                     IconButton.filled(
-                      onPressed: onReady,
+                      onPressed: widget.onCancel,
                       icon: const Icon(
-                        Icons.check_box,
+                        Icons.indeterminate_check_box,
                       ),
-                      color: Colors.green,
-                      padding: const EdgeInsets.only(right: 5.0),
+                      color: Colors.red,
+                      padding: const EdgeInsets.only(right: 10.0),
                     ),
                     IconButton.filled(
-                      onPressed: onCancel,
+                      onPressed: widget.onCancel,
                       icon: const Icon(
                         Icons.indeterminate_check_box,
                       ),
@@ -144,9 +150,9 @@ class OrderCard extends StatelessWidget {
                       constraints: const BoxConstraints(maxHeight: 200),
                       child: ListView.builder(
                         shrinkWrap: true,
-                        itemCount: order.orderItems.length,
+                        itemCount: orderItems.length,
                         itemBuilder: (context, index) {
-                          final orderItem = order.orderItems[index];
+                          final orderItem = orderItems[index];
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 6.0),
                             child: Row(
@@ -196,7 +202,7 @@ class OrderCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
-                            "Total Price: ${order.totalPrice}",
+                            "Total Price: ${widget.order.totalPrice}",
                             style: Theme.of(context).textTheme.labelLarge,
                           )
                         ],

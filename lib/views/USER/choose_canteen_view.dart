@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_ui_storage/firebase_ui_storage.dart';
 import 'package:flutter/material.dart';
@@ -78,6 +79,9 @@ class _ChooseCanteenViewState extends State<ChooseCanteenView> {
   @override
   Widget build(BuildContext context) {
     print(_canteenService.userId);
+    final user = FirebaseAuth.instance.currentUser;
+    print(user!.metadata.creationTime);
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,

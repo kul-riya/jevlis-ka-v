@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jevlis_ka/services/auth/bloc/auth_bloc.dart';
 import 'package:jevlis_ka/services/auth/bloc/auth_event.dart';
-// import 'package:jevlis_ka/auth/auth_exceptions.dart';
 import 'package:jevlis_ka/components/registration_screens/register_login_button.dart';
 import 'package:jevlis_ka/components/registration_screens/register_text_field.dart';
 
@@ -16,11 +15,13 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
+  late final TextEditingController _numberController;
 
   @override
   void initState() {
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
+    _numberController = TextEditingController();
     super.initState();
   }
 
@@ -28,12 +29,14 @@ class _LoginViewState extends State<LoginView> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _numberController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     // TODO: Add exception handling using bloclistener
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: Padding(
@@ -49,30 +52,53 @@ class _LoginViewState extends State<LoginView> {
             const SizedBox(
               height: 90,
             ),
-            RegisterTextField(
-                hintText: "Email",
-                obscureText: false,
-                controller: _emailController),
-            RegisterTextField(
-                hintText: "Password",
-                obscureText: true,
-                controller: _passwordController),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12.0),
+              child: TextField(
+                controller: _numberController,
+                decoration: InputDecoration(
+                    prefixText: '+91 ',
+                    hintText: 'Enter Phone Number',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12))),
+              ),
+            ),
             RegisterLoginButton(
               color: Theme.of(context).colorScheme.secondary,
-              text: "Continue",
+              text: "Continue with phone number",
               onPressed: () async {
-                final email = _emailController.text;
-                final password = _passwordController.text;
-                context.read<AuthBloc>().add(
-                    AuthEventEmailLoginUser(email: email, password: password));
+                final phoneNumber = '+91${_numberController.text}';
+                context
+                    .read<AuthBloc>()
+                    .add(AuthEventPhoneLoginUser(phone: phoneNumber));
+                // await confirmationResult.confirm('123456');
               },
             ),
-            Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Text(
-                  "Or",
-                  style: Theme.of(context).textTheme.titleSmall,
-                )),
+            // RegisterTextField(
+            //     hintText: "Email",
+            //     obscureText: false,
+            //     controller: _emailController),
+            // RegisterTextField(
+            //     hintText: "Password",
+            //     obscureText: true,
+            //     controller: _passwordController),
+            // RegisterLoginButton(
+            //   color: Theme.of(context).colorScheme.secondary,
+            //   text: "Continue",
+            //   onPressed: () async {
+            //     final email = _emailController.text;
+            //     final password = _passwordController.text;
+            //     context.read<AuthBloc>().add(
+            //         AuthEventEmailLoginUser(email: email, password: password));
+            //   },
+            // ),
+            // Padding(
+            //     padding: const EdgeInsets.all(10.0),
+            //     child: Text(
+            //       "Or",
+            //       style: Theme.of(context).textTheme.titleSmall,
+            //     )),
+            const Divider(),
             RegisterLoginButton(
                 color: Theme.of(context).colorScheme.secondary,
                 text: "Sign In with Google",

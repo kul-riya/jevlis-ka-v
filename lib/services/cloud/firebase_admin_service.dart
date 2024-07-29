@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:jevlis_ka/constants/json_string_constants.dart';
 import 'package:jevlis_ka/models/menu_item_model.dart';
 import 'package:jevlis_ka/models/order_model.dart';
 
@@ -24,12 +23,9 @@ class FirebaseAdminService {
           .map((doc) => CanteenOrder.fromSnapshot(doc))
           .where((order) => order.canteenId == adminCanteenId));
 
-  Future<void> makeOrderReady({required String orderId}) async {
-    await orders.doc(orderId).update({'orderStatus': orderReady});
-  }
-
-  Future<void> makeOrderCancel({required String orderId}) async {
-    await orders.doc(orderId).update({'orderStatus': orderCancelled});
+  Future<void> updateOrderStatus(
+      {required String orderId, required String orderStatus}) async {
+    await orders.doc(orderId).update({'orderStatus': orderStatus});
   }
 
   Future<void> updateItem({required MenuItem item}) async {

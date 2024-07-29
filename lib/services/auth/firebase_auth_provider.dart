@@ -1,12 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart'
-    show FirebaseAuth, FirebaseAuthException, GoogleAuthProvider;
+    show
+        ConfirmationResult,
+        FirebaseAuth,
+        FirebaseAuthException,
+        GoogleAuthProvider,
+        UserCredential;
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:jevlis_ka/services/auth/auth_exceptions.dart';
-import 'package:jevlis_ka/services/auth/auth_provider.dart';
+import 'package:jevlis_ka/services/auth/auth_provider.dart' as my_provider;
 import 'package:jevlis_ka/services/auth/auth_user.dart';
 import 'package:jevlis_ka/firebase_options.dart';
+import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
 
-class FirebaseAuthProvider implements AuthProvider {
+class FirebaseAuthProvider implements my_provider.AuthProvider {
   @override
   Future<AuthUser> createUser(
       {required String email, required String password}) async {
@@ -16,6 +23,8 @@ class FirebaseAuthProvider implements AuthProvider {
       final user = currentUser;
 
       if (user != null) {
+        final FirebaseCanteenService canteenService = FirebaseCanteenService();
+        await canteenService.addToUsers(uid: user.uid);
         return user;
       } else {
         throw UserNotLoggedInAuthException();
@@ -101,6 +110,33 @@ class FirebaseAuthProvider implements AuthProvider {
       }
     } on FirebaseAuthException catch (_) {
       throw GenericAuthException();
+    }
+  }
+
+  @override
+  Future<AuthUser> signInWithPhoneNumber({required String phoneNumber}) async {
+    try {
+      ConfirmationResult confirmationResult =
+          await FirebaseAuth.instance.signInWithPhoneNumber(phoneNumber);
+
+      //TODO: Input smscode dialog box once firebase issue resolved
+      UserCredential userCredential =
+          await confirmationResult.confirm('123456');
+      final user = currentUser;
+
+      if (user != null) {
+        if (userCredential.additionalUserInfo!.isNewUser) {
+          final FirebaseCanteenService canteenService =
+              FirebaseCanteenService();
+          await canteenService.addToUsers(uid: user.uid);
+        }
+
+        return user;
+      } else {
+        throw UserNotLoggedInAuthException();
+      }
+    } catch (e) {
+      throw PhoneVerificationAuthException();
     }
   }
 }

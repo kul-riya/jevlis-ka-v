@@ -48,7 +48,9 @@ class _CanteenHomeViewState extends State<CanteenHomeView> {
               ),
 
               // Order History View
-              const OrderHistoryView(),
+              OrderHistoryView(
+                adminCanteenId: snapshot.data!,
+              ),
             ];
             return Scaffold(
               appBar: AppBar(

@@ -1,9 +1,13 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jevlis_ka/components/dialogs/delete_item_dialog.dart';
 import 'package:jevlis_ka/models/menu_item_model.dart';
 import 'package:jevlis_ka/services/cloud/cloud_storage_exceptions.dart';
 import 'package:jevlis_ka/services/cloud/firebase_admin_service.dart';
+import 'package:image_input/image_input.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class CreateUpdateItemView extends StatefulWidget {
   final MenuItem item;
@@ -18,6 +22,8 @@ class _CreateUpdateItemViewState extends State<CreateUpdateItemView> {
   late final TextEditingController _categoryController;
   late final TextEditingController _priceController;
   late final FirebaseAdminService _adminService;
+  XFile? profileAvatarCurrentImage;
+
   bool _isHidden = false;
   bool _isVeg = false;
 
@@ -45,6 +51,68 @@ class _CreateUpdateItemViewState extends State<CreateUpdateItemView> {
   @override
   Widget build(BuildContext context) {
     final menuItem = widget.item;
+
+    getImageSource(BuildContext context) {
+      return showDialog<ImageSource>(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            children: [
+              SimpleDialogOption(
+                child: const Text("Camera"),
+                onPressed: () {
+                  Navigator.of(context).pop(ImageSource.camera);
+                },
+              ),
+              SimpleDialogOption(
+                  child: const Text("Gallery"),
+                  onPressed: () {
+                    Navigator.of(context).pop(ImageSource.gallery);
+                  }),
+            ],
+          );
+        },
+      ).then((value) {
+        return value ?? ImageSource.gallery;
+      });
+    }
+
+    getPrefferedCameraDevice(BuildContext context) async {
+      var status = await Permission.camera.request();
+      if (status.isDenied) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Allow Camera Permission"),
+          ),
+        );
+        return null;
+      }
+      return showDialog<CameraDevice>(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            children: [
+              SimpleDialogOption(
+                child: const Text("Rear"),
+                onPressed: () {
+                  Navigator.of(context).pop(CameraDevice.rear);
+                },
+              ),
+              SimpleDialogOption(
+                  child: const Text("Front"),
+                  onPressed: () {
+                    Navigator.of(context).pop(CameraDevice.front);
+                  }),
+            ],
+          );
+        },
+      ).then(
+        (value) {
+          return value ?? CameraDevice.rear;
+        },
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Edit menu: ${menuItem.name}"),
@@ -54,8 +122,41 @@ class _CreateUpdateItemViewState extends State<CreateUpdateItemView> {
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
         child: ListView(
           children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.3,
+            ProfileAvatar(
+              image: profileAvatarCurrentImage,
+              allowEdit: true,
+              addImageIcon: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(Icons.add_a_photo),
+                ),
+              ),
+              removeImageIcon: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(Icons.close),
+                ),
+              ),
+              onImageChanged: (XFile? image) {
+                setState(() {
+                  profileAvatarCurrentImage = image;
+                });
+              },
+              onImageRemoved: () {
+                setState(() {
+                  profileAvatarCurrentImage = null;
+                });
+              },
+              getImageSource: () async => await getImageSource(context),
+              getPreferredCameraDevice: () async =>
+                  await getPrefferedCameraDevice(context),
             ),
             TextFormField(
               controller: _nameController,

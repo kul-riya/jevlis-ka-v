@@ -9,6 +9,12 @@ class AuthEventInitialize extends AuthEvent {
   const AuthEventInitialize();
 }
 
+class AuthEventPhoneLoginUser extends AuthEvent {
+  final String phone;
+
+  const AuthEventPhoneLoginUser({required this.phone});
+}
+
 class AuthEventEmailLoginUser extends AuthEvent {
   final String email;
   final String password;

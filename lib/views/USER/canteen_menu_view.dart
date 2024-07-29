@@ -1,6 +1,8 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_ui_storage/firebase_ui_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:jevlis_ka/models/cart_model.dart';
 import 'package:jevlis_ka/models/menu_item_model.dart';
 import 'package:jevlis_ka/services/cloud/firebase_cart_service.dart';
@@ -116,7 +118,6 @@ class MenuItemCard extends StatelessWidget {
           ],
         ),
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(
               width: double.infinity,
@@ -132,53 +133,64 @@ class MenuItemCard extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 24.0, right: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          maxLines: 2,
-                          overflow: TextOverflow.clip,
-                          menuItem.name,
-                          style: Theme.of(context).textTheme.labelMedium,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                menuItem.name,
+                                softWrap: true,
+                                style: Theme.of(context).textTheme.labelMedium,
+                              ),
+                              const SizedBox(
+                                height: 3.0,
+                              ),
+                              Text(
+                                "₹ ${menuItem.price}",
+                                style: const TextStyle(
+                                    fontSize: 11.5, color: Colors.grey),
+                              )
+                            ],
+                          ),
                         ),
-                        const SizedBox(
-                          height: 3.0,
-                        ),
-                        Text(
-                          '₹ ${menuItem.price}',
-                          style: const TextStyle(
-                              fontSize: 11.5, color: Colors.grey),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  IconButton(
+                                      onPressed: () async {
+                                        onIconPress(-1);
+                                      },
+                                      icon: const Icon(
+                                          Icons.remove_circle_outline)),
+                                  Text(qty.toString()),
+                                  IconButton(
+                                      onPressed: () async {
+                                        onIconPress(1);
+                                      },
+                                      icon:
+                                          const Icon(Icons.add_circle_outline)),
+                                ],
+                              )
+                            ],
+                          ),
                         )
                       ],
                     ),
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(
-                            Icons.remove_circle_outline,
-                          ),
-                          onPressed: () async {
-                            onIconPress(-1);
-                          },
-                        ),
-                        Text(qty.toString()),
-                        IconButton(
-                            onPressed: () {
-                              onIconPress(1);
-                            },
-                            icon: const Icon(Icons.add_circle_outline))
-                      ],
-                    )
-                  ],
-                ),
+                  )
+                ],
               ),
-            ),
+            )
           ],
         ),
       );

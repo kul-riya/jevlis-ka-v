@@ -26,6 +26,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       },
     );
 
+    on<AuthEventPhoneLoginUser>(
+      (event, emit) async {
+        final FirebaseCanteenService canteenService = FirebaseCanteenService();
+
+        try {
+          final user =
+              await provider.signInWithPhoneNumber(phoneNumber: event.phone);
+          if (await canteenService.getAdminCanteenId(uid: user.uid) != null) {
+            emit(AuthStateLoggedInCanteen(user: user));
+          } else {
+            emit(AuthStateLoggedInUser(user: user));
+          }
+        } on Exception catch (e) {
+          emit(AuthStateLoggedOut(exception: e));
+        }
+      },
+    );
+
     on<AuthEventEmailLoginUser>(
       (event, emit) async {
         // TODO: check how app behaves if initial state for this event is not provided
@@ -75,13 +93,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthEventRegister>(
       (event, emit) async {
         emit(const AuthStateLoading());
-        final FirebaseCanteenService canteenService = FirebaseCanteenService();
+        // final FirebaseCanteenService canteenService = FirebaseCanteenService();
 
         try {
-          final user = await provider.createUser(
+          // final user =
+          await provider.createUser(
               email: event.email, password: event.password);
 
-          await canteenService.addToUsers(uid: user.uid);
+          // await canteenService.addToUsers(uid: user.uid);
           emit(const AuthStateLoggedOut(exception: null));
         } on Exception catch (e) {
           emit(AuthStateRegistering(exception: e));

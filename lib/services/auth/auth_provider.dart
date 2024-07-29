@@ -18,4 +18,8 @@ abstract class AuthProvider {
   Future<void> userLogOut();
 
   Future<AuthUser> signInWithGoogle();
+
+  Future<AuthUser> signInWithPhoneNumber({
+    required String phoneNumber,
+  });
 }
