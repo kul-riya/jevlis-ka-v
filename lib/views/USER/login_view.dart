@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jevlis_ka/services/auth/bloc/auth_bloc.dart';
 import 'package:jevlis_ka/services/auth/bloc/auth_event.dart';
 import 'package:jevlis_ka/components/registration_screens/register_login_button.dart';
-import 'package:jevlis_ka/components/registration_screens/register_text_field.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -98,7 +97,12 @@ class _LoginViewState extends State<LoginView> {
             //       "Or",
             //       style: Theme.of(context).textTheme.titleSmall,
             //     )),
-            const Divider(),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 12.0),
+              child: Divider(
+                color: Colors.white30,
+              ),
+            ),
             RegisterLoginButton(
                 color: Theme.of(context).colorScheme.secondary,
                 text: "Sign In with Google",
@@ -107,16 +111,16 @@ class _LoginViewState extends State<LoginView> {
                       .read<AuthBloc>()
                       .add(const AuthEventGoogleLoginUser());
                 }),
-            const Padding(
-                padding: EdgeInsets.only(top: 20.0, bottom: 7.0),
-                child: Text("Not Registered Yet?")),
-            RegisterLoginButton(
-              color: Theme.of(context).colorScheme.tertiary,
-              text: "Register Now",
-              onPressed: () {
-                context.read<AuthBloc>().add(const AuthEventShouldRegister());
-              },
-            )
+            // const Padding(
+            //     padding: EdgeInsets.only(top: 20.0, bottom: 7.0),
+            //     child: Text("Not Registered Yet?")),
+            // RegisterLoginButton(
+            //   color: Theme.of(context).colorScheme.tertiary,
+            //   text: "Register Now",
+            //   onPressed: () {
+            //     context.read<AuthBloc>().add(const AuthEventShouldRegister());
+            //   },
+            // )
           ],
         ),
       ),

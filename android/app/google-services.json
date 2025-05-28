@@ -12,7 +12,12 @@
           "package_name": "com.jevliska.jevlis_ka"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "98977359608-i0q54j4cvu33pqlfqp6ki2pk6poi0r46.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCxuJnvMhzwDWR9QfCTpnMMbjwaJJ0-jLw"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "98977359608-i0q54j4cvu33pqlfqp6ki2pk6poi0r46.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "98977359608-n09eoupoilk3khad665e03sesea0edsd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.jevliska.jevlisKa"
+              }
+            }
+          ]
         }
       }
     }

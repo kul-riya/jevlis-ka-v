@@ -15,33 +15,33 @@ import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
 
 class FirebaseAuthProvider implements my_provider.AuthProvider {
   @override
-  Future<AuthUser> createUser(
-      {required String email, required String password}) async {
-    try {
-      await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
-      final user = currentUser;
+  // Future<AuthUser> createUser(
+  //     {required String email, required String password}) async {
+  //   try {
+  //     await FirebaseAuth.instance
+  //         .createUserWithEmailAndPassword(email: email, password: password);
+  //     final user = currentUser;
 
-      if (user != null) {
-        final FirebaseCanteenService canteenService = FirebaseCanteenService();
-        await canteenService.addToUsers(uid: user.uid);
-        return user;
-      } else {
-        throw UserNotLoggedInAuthException();
-      }
-    } on FirebaseAuthException catch (e) {
-      switch (e.code) {
-        case 'invalid-email':
-          throw InvalidEmailAuthException();
-        case 'weak-password':
-          throw WeakPasswordAuthException();
-        case 'email-already-in-use':
-          throw EmailAlreadyInUseAuthException();
-        default:
-          throw GenericAuthException();
-      }
-    }
-  }
+  //     if (user != null) {
+  //       final FirebaseCanteenService canteenService = FirebaseCanteenService();
+  //       await canteenService.addToUsers(uid: user.uid);
+  //       return user;
+  //     } else {
+  //       throw UserNotLoggedInAuthException();
+  //     }
+  //   } on FirebaseAuthException catch (e) {
+  //     switch (e.code) {
+  //       case 'invalid-email':
+  //         throw InvalidEmailAuthException();
+  //       case 'weak-password':
+  //         throw WeakPasswordAuthException();
+  //       case 'email-already-in-use':
+  //         throw EmailAlreadyInUseAuthException();
+  //       default:
+  //         throw GenericAuthException();
+  //     }
+  //   }
+  // }
 
   @override
   Future<void> initialize() async {
@@ -120,6 +120,7 @@ class FirebaseAuthProvider implements my_provider.AuthProvider {
           await FirebaseAuth.instance.signInWithPhoneNumber(phoneNumber);
 
       //TODO: Input smscode dialog box once firebase issue resolved
+      // String phoneNumber = await getSmsCodeFromUser(context);
       UserCredential userCredential =
           await confirmationResult.confirm('123456');
       final user = currentUser;

@@ -11,11 +11,11 @@ class AuthService implements AuthProvider {
     return AuthService(FirebaseAuthProvider());
   }
 
-  @override
-  Future<AuthUser> createUser(
-      {required String email, required String password}) {
-    return provider.createUser(email: email, password: password);
-  }
+  // @override
+  // Future<AuthUser> createUser(
+  //     {required String email, required String password}) {
+  //   return provider.createUser(email: email, password: password);
+  // }
 
   @override
   AuthUser? get currentUser {

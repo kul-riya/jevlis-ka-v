@@ -28,8 +28,10 @@ final userRouter = GoRouter(
       path: Constants().userHomeRoute(':canteenId'),
       name: 'dis rest',
       builder: (context, state) => UserHomeView(
-          canteenId: state.pathParameters['canteenId']!,
-          canteenName: (state.extra as Map)['name']),
+        canteenId: state.pathParameters['canteenId']!,
+        canteenName: (state.extra as Map)['name'],
+        userId: (state.extra as Map)['uid'],
+      ),
     )
   ],
 );

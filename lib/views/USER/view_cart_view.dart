@@ -7,7 +7,7 @@ import 'package:jevlis_ka/services/cloud/firebase_cart_service.dart';
 
 class ViewCartView extends StatefulWidget {
   final Iterable<MenuItem> allMenuItems;
-  final Cart? userCart;
+  final Cart userCart;
   final String canteenId;
   final String canteenName;
   const ViewCartView(
@@ -34,13 +34,7 @@ class _ViewCartViewState extends State<ViewCartView> {
   Widget build(BuildContext context) {
     final Iterable<MenuItem> allMenuItems = widget.allMenuItems;
     final String canteenId = widget.canteenId;
-    Cart userCart = widget.userCart ??
-        Cart(
-            cartItems: [],
-            canteenId: widget.canteenId,
-            canteenName: widget.canteenName,
-            id: _cartService.userId!,
-            total: 0);
+    Cart userCart = widget.userCart;
     final cartItems = userCart.cartItems;
     return Scaffold(
         body: (userCart.canteenId == widget.canteenId)
@@ -102,8 +96,7 @@ class _ViewCartViewState extends State<ViewCartView> {
                     ]),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Expanded(
-                      child: Column(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Row(
@@ -151,7 +144,7 @@ class _ViewCartViewState extends State<ViewCartView> {
                         ),
                       )
                     ],
-                  )),
+                  ),
                 ),
               ));
   }

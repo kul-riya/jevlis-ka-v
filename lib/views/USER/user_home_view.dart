@@ -13,9 +13,13 @@ import 'package:jevlis_ka/views/USER/view_cart_view.dart';
 class UserHomeView extends StatefulWidget {
   final String canteenId;
   final String canteenName;
+  final String userId;
 
   const UserHomeView(
-      {super.key, required this.canteenId, required this.canteenName});
+      {super.key,
+      required this.canteenId,
+      required this.canteenName,
+      required this.userId});
 
   @override
   State<UserHomeView> createState() => _UserHomeViewState();
@@ -47,13 +51,18 @@ class _UserHomeViewState extends State<UserHomeView> {
         builder: (context, menuItemsSnapshot) {
           if (menuItemsSnapshot.hasData) {
             return StreamBuilder(
-                stream: _canteenService.getCart(),
+                stream: _canteenService.getCart(uid: widget.userId),
                 builder: (context, cartSnapshot) {
                   if (cartSnapshot.hasData) {
                     final allMenuItems =
                         menuItemsSnapshot.data as Iterable<MenuItem>;
-                    final Cart? userCart = cartSnapshot.data!.data() == null
-                        ? null
+                    final Cart userCart = cartSnapshot.data!.data() == null
+                        ? Cart(
+                            cartItems: [],
+                            canteenId: canteenId,
+                            id: widget.userId,
+                            total: 0,
+                            canteenName: canteenName)
                         : Cart.fromSnapshot(cartSnapshot.data!);
                     // build the pages
                     final List<Widget> pages = [
@@ -63,6 +72,7 @@ class _UserHomeViewState extends State<UserHomeView> {
                         userCart: userCart,
                         canteenId: canteenId,
                         canteenName: canteenName,
+                        userId: widget.userId,
                       ),
 
                       // cart screen
@@ -72,7 +82,9 @@ class _UserHomeViewState extends State<UserHomeView> {
                         canteenId: canteenId,
                         canteenName: canteenName,
                       ),
-                      const FavouritesView(),
+                      FavouritesView(
+                        allMenuItems: allMenuItems,
+                      ),
                       const ProfileView(),
                     ];
                     return Scaffold(

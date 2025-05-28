@@ -63,6 +63,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '98977359608',
     projectId: 'jevlis-ka-part2',
     storageBucket: 'jevlis-ka-part2.appspot.com',
+    iosClientId: '98977359608-n09eoupoilk3khad665e03sesea0edsd.apps.googleusercontent.com',
     iosBundleId: 'com.jevliska.jevlisKa',
   );
 
@@ -72,6 +73,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '98977359608',
     projectId: 'jevlis-ka-part2',
     storageBucket: 'jevlis-ka-part2.appspot.com',
+    iosClientId: '98977359608-n09eoupoilk3khad665e03sesea0edsd.apps.googleusercontent.com',
     iosBundleId: 'com.jevliska.jevlisKa',
   );
 
@@ -83,4 +85,5 @@ class DefaultFirebaseOptions {
     authDomain: 'jevlis-ka-part2.firebaseapp.com',
     storageBucket: 'jevlis-ka-part2.appspot.com',
   );
+
 }

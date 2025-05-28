@@ -1,4 +1,6 @@
+import 'dart:developer' show log;
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:flutter/material.dart';
 import 'package:jevlis_ka/constants/routes.dart';
 import 'package:jevlis_ka/services/auth/bloc/auth_bloc.dart';
@@ -7,11 +9,13 @@ import 'package:jevlis_ka/services/auth/bloc/auth_state.dart';
 import 'package:jevlis_ka/services/auth/firebase_auth_provider.dart';
 import 'package:jevlis_ka/theme/theme.dart';
 import 'package:jevlis_ka/views/USER/login_view.dart';
-import 'package:jevlis_ka/views/USER/register_view.dart';
+
+// +91 9999999990: bcc
+// +91 1234567890: user
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  print("this is main");
+  log("this is main");
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -31,7 +35,7 @@ class AuthApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<AuthBloc>().add(const AuthEventInitialize());
-    print("this is auth app");
+    log("this is auth app");
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthStateLoggedInUser) {
@@ -40,8 +44,6 @@ class AuthApp extends StatelessWidget {
           return const CanteenApp();
         } else if (state is AuthStateLoggedOut) {
           return const LoginView();
-        } else if (state is AuthStateRegistering) {
-          return const RegisterView();
         } else {
           return const Scaffold(
             body: Center(
@@ -59,7 +61,7 @@ class UserApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("this is user app");
+    log("this is user app");
     return MaterialApp.router(
       routerConfig: userRouter,
       theme: mainTheme,
@@ -73,7 +75,7 @@ class CanteenApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("this is canteen app");
+    log("this is canteen app");
 
     return MaterialApp.router(
       theme: mainTheme,

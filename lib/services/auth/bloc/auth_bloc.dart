@@ -33,6 +33,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         try {
           final user =
               await provider.signInWithPhoneNumber(phoneNumber: event.phone);
+          await canteenService.addToUsers(uid: user.uid);
+
           if (await canteenService.getAdminCanteenId(uid: user.uid) != null) {
             emit(AuthStateLoggedInCanteen(user: user));
           } else {
@@ -46,7 +48,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<AuthEventEmailLoginUser>(
       (event, emit) async {
-        // TODO: check how app behaves if initial state for this event is not provided
         emit(const AuthStateLoading());
         final FirebaseCanteenService canteenService = FirebaseCanteenService();
 
@@ -66,12 +67,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<AuthEventGoogleLoginUser>(
       (event, emit) async {
-        // TODO: check how app behaves if initial state for this event is not provided
         emit(const AuthStateLoading());
         final FirebaseCanteenService canteenService = FirebaseCanteenService();
 
         try {
           final user = await provider.signInWithGoogle();
+          await canteenService.addToUsers(uid: user.uid);
 
           if (await canteenService.getAdminCanteenId(uid: user.uid) != null) {
             emit(AuthStateLoggedInCanteen(user: user));
@@ -84,29 +85,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       },
     );
 
-    on<AuthEventShouldRegister>(
-      (event, emit) {
-        emit(const AuthStateRegistering(exception: null));
-      },
-    );
+    // on<AuthEventShouldRegister>(
+    //   (event, emit) {
+    //     emit(const AuthStateRegistering(exception: null));
+    //   },
+    // );
 
-    on<AuthEventRegister>(
-      (event, emit) async {
-        emit(const AuthStateLoading());
-        // final FirebaseCanteenService canteenService = FirebaseCanteenService();
+    // on<AuthEventRegister>(
+    //   (event, emit) async {
+    //     emit(const AuthStateLoading());
+    //     // final FirebaseCanteenService canteenService = FirebaseCanteenService();
 
-        try {
-          // final user =
-          await provider.createUser(
-              email: event.email, password: event.password);
+    //     try {
+    //       // final user =
+    //       await provider.createUser(
+    //           email: event.email, password: event.password);
 
-          // await canteenService.addToUsers(uid: user.uid);
-          emit(const AuthStateLoggedOut(exception: null));
-        } on Exception catch (e) {
-          emit(AuthStateRegistering(exception: e));
-        }
-      },
-    );
+    //       // await canteenService.addToUsers(uid: user.uid);
+    //       emit(const AuthStateLoggedOut(exception: null));
+    //     } on Exception catch (e) {
+    //       emit(AuthStateRegistering(exception: e));
+    //     }
+    //   },
+    // );
 
     on<AuthEventLogOut>((event, emit) async {
       emit(const AuthStateLoading());

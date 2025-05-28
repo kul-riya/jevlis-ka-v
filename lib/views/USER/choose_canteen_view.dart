@@ -1,11 +1,91 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_ui_storage/firebase_ui_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jevlis_ka/models/canteen_model.dart';
+import 'package:jevlis_ka/services/auth/firebase_auth_provider.dart';
 import 'package:jevlis_ka/services/cloud/firebase_canteen_service.dart';
 import 'package:jevlis_ka/constants/routes.dart' show Constants;
+
+class ChooseCanteenView extends StatefulWidget {
+  const ChooseCanteenView({super.key});
+
+  @override
+  State<ChooseCanteenView> createState() => _ChooseCanteenViewState();
+}
+
+class _ChooseCanteenViewState extends State<ChooseCanteenView> {
+  late final FirebaseCanteenService _canteenService;
+  late final FirebaseAuthProvider _provider;
+
+  @override
+  void initState() {
+    _canteenService = FirebaseCanteenService();
+    _provider = FirebaseAuthProvider();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final user = FirebaseAuth.instance.currentUser;
+    // print(user!.metadata.creationTime);
+
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Theme.of(context).colorScheme.background,
+        centerTitle: true,
+        elevation: 0,
+        title: StorageImage(
+          ref: _canteenService.getImageReference(
+              imagePath:
+                  "gs://jevlis-ka-part2.appspot.com/hat_logo_white-removebg-preview.png"),
+          fit: BoxFit.contain,
+          height: 65,
+        ),
+        toolbarHeight: 65,
+      ),
+      body: StreamBuilder(
+        stream: _canteenService.getCanteens(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+            case ConnectionState.active:
+            case ConnectionState.done:
+              if (snapshot.hasData) {
+                final allCanteens = snapshot.data as Iterable<Canteen>;
+                return ListView.builder(
+                  itemCount: allCanteens.length,
+                  itemBuilder: (context, index) {
+                    final canteen = allCanteens.elementAt(index);
+                    return GestureDetector(
+                      onTap: () {
+                        context.go(Constants().userHomeRoute(canteen.canteenId),
+                            extra: {
+                              'name': canteen.name,
+                              'uid': _provider.currentUser!.uid
+                            });
+                      },
+                      child: CanteenCard(
+                        name: canteen.name,
+                        location: canteen.location,
+                        imageRef: _canteenService.getImageReference(
+                            imagePath: canteen.imagePath),
+                      ),
+                    );
+                  },
+                );
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            default:
+              return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+    );
+  }
+}
 
 @immutable
 class CanteenCard extends StatelessWidget {
@@ -55,87 +135,6 @@ class CanteenCard extends StatelessWidget {
             )
           ],
         ),
-      ),
-    );
-  }
-}
-
-class ChooseCanteenView extends StatefulWidget {
-  const ChooseCanteenView({super.key});
-
-  @override
-  State<ChooseCanteenView> createState() => _ChooseCanteenViewState();
-}
-
-class _ChooseCanteenViewState extends State<ChooseCanteenView> {
-  late final FirebaseCanteenService _canteenService;
-
-  @override
-  void initState() {
-    _canteenService = FirebaseCanteenService();
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    print(_canteenService.userId);
-    final user = FirebaseAuth.instance.currentUser;
-    print(user!.metadata.creationTime);
-
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Theme.of(context).colorScheme.background,
-        centerTitle: true,
-        elevation: 0,
-        title: StorageImage(
-          ref: _canteenService.getImageReference(
-              imagePath:
-                  "gs://jevlis-ka-part2.appspot.com/hat_logo_white-removebg-preview.png"),
-          fit: BoxFit.contain,
-          height: 65,
-        ),
-        // Image.asset(
-        //   '/home/kul-riya/Developer/Flutter/jevlis_ka/lib/assets/images/hat_logo_white-removebg-preview.png',
-        //   fit: BoxFit.contain,
-        //   height: 65,
-        // ),
-        toolbarHeight: 65,
-      ),
-      body: StreamBuilder(
-        stream: _canteenService.getCanteens(),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-            case ConnectionState.active:
-            case ConnectionState.done:
-              if (snapshot.hasData) {
-                final allCanteens = snapshot.data as Iterable<Canteen>;
-                return ListView.builder(
-                  itemCount: allCanteens.length,
-                  itemBuilder: (context, index) {
-                    final canteen = allCanteens.elementAt(index);
-                    return GestureDetector(
-                      onTap: () {
-                        context.go(Constants().userHomeRoute(canteen.canteenId),
-                            extra: {'name': canteen.name});
-                      },
-                      child: CanteenCard(
-                        name: canteen.name,
-                        location: canteen.location,
-                        imageRef: _canteenService.getImageReference(
-                            imagePath: canteen.imagePath),
-                      ),
-                    );
-                  },
-                );
-              } else {
-                return const Center(child: CircularProgressIndicator());
-              }
-            default:
-              return const Center(child: CircularProgressIndicator());
-          }
-        },
       ),
     );
   }

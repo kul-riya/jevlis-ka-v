@@ -101,9 +101,10 @@ class _OrderCardState extends State<OrderCard> {
                 Row(
                   children: [
                     IconButton.filled(
-                      onPressed: widget.onCancel,
+                      onPressed: widget.onReady,
                       icon: const Icon(
-                        Icons.indeterminate_check_box,
+                        Icons.check_box,
+                        color: Colors.green,
                       ),
                       color: Colors.red,
                       padding: const EdgeInsets.only(right: 10.0),

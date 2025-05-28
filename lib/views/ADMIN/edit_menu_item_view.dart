@@ -23,41 +23,68 @@ class _EditMenuItemViewState extends State<EditMenuItemView> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: _canteenService.getMenuItems(canteenId: widget.adminCanteenId),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final allMenuItems = snapshot.data as Iterable<MenuItem>;
-            return GridView.builder(
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 280,
-                    childAspectRatio: 1,
-                    crossAxisSpacing: 40,
-                    mainAxisSpacing: 40),
-                itemCount: allMenuItems.length,
-                itemBuilder: (context, index) {
-                  final menuItem = allMenuItems.elementAt(index);
-                  return MenuItemWidget(
-                    menuItem: menuItem,
-                    imageRef: _canteenService.getImageReference(
-                        imagePath: menuItem.imagePath),
-                    onToggleVisibility: (bool isHidden) async {
-                      await _canteenService.updateVisibility(
-                          isHidden, menuItem.id);
-                    },
-                    onEdit: () {
-                      context.pushNamed("edit-item",
-                          pathParameters: {"itemId": menuItem.id},
-                          extra: menuItem);
-                    },
-                  );
-                });
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        });
+    return Scaffold(
+      body: StreamBuilder(
+          stream:
+              _canteenService.getMenuItems(canteenId: widget.adminCanteenId),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final allMenuItems = snapshot.data as Iterable<MenuItem>;
+              return GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 280,
+                      childAspectRatio: 1,
+                      crossAxisSpacing: 40,
+                      mainAxisSpacing: 40),
+                  itemCount: allMenuItems.length,
+                  itemBuilder: (context, index) {
+                    final menuItem = allMenuItems.elementAt(index);
+                    return MenuItemWidget(
+                      menuItem: menuItem,
+                      imageRef: _canteenService.getImageReference(
+                          imagePath: menuItem.imagePath),
+                      onToggleVisibility: (bool isHidden) async {
+                        await _canteenService.updateVisibility(
+                            isHidden, menuItem.id);
+                      },
+                      onEdit: () {
+                        context.pushNamed("edit-item",
+                            pathParameters: {"itemId": menuItem.id},
+                            extra: menuItem);
+                      },
+                    );
+                  });
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          }),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        onPressed: () {
+          String newItemId = _canteenService.menuItems.doc().id;
+          MenuItem newItem = MenuItem(
+              category: "",
+              isHidden: false,
+              isVeg: true,
+              imagePath: "",
+              id: newItemId,
+              name: "",
+              price: 0,
+              canteenId: widget.adminCanteenId);
+          context.pushNamed("edit-item",
+              pathParameters: {"itemId": newItemId}, extra: newItem);
+        },
+        hoverElevation: 7,
+        hoverColor: Colors.deepOrange[300],
+        child: const Icon(
+          Icons.add_circle,
+          // size: double.infinity,
+          color: Colors.white,
+        ),
+      ),
+    );
   }
 }
 

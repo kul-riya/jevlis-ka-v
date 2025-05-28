@@ -295,6 +295,13 @@ class _CreateUpdateItemViewState extends State<CreateUpdateItemView> {
                           name: _nameController.text,
                           price: double.parse(_priceController.text),
                           canteenId: menuItem.canteenId));
+                  await showDialog(
+                      context: context,
+                      builder: (context) {
+                        return const AlertDialog(
+                          content: Text("Applied changes!"),
+                        );
+                      });
                 },
                 child: const Text(
                   "Apply",

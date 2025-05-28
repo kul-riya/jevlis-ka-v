@@ -34,6 +34,7 @@ class _CanteenHomeViewState extends State<CanteenHomeView> {
 
   @override
   Widget build(BuildContext context) {
+    print(DateTime.now());
     return FutureBuilder(
         future: _adminService.getAdminCanteenId(uid: provider.currentUser!.uid),
         builder: (context, snapshot) {

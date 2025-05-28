@@ -17,6 +17,12 @@ class FirebaseCartService {
 
   String? get userId => FirebaseAuthProvider().currentUser?.uid;
 
+  Stream<DocumentSnapshot<Map<String, dynamic>?>> likes() {
+    final userRef = users.doc(userId);
+    final likes = userRef.snapshots();
+    return likes;
+  }
+
   Reference getImageReference({required String imagePath}) =>
       FirebaseStorage.instance.ref(imagePath);
 
@@ -38,6 +44,7 @@ class FirebaseCartService {
           throw CouldNotCreateCartException();
         }
       } else {
+        // ignore: use_build_context_synchronously
         context.go(Constants.chooseCanteenRoute);
       }
     } else {
@@ -79,6 +86,22 @@ class FirebaseCartService {
       });
     } catch (e) {
       throw CouldNotDeleteCartItemsException();
+    }
+  }
+
+  Future<void> toggleLikes(String menuItemId, bool toggleTo) async {
+    try {
+      if (toggleTo) {
+        users.doc(userId).update({
+          'likes': FieldValue.arrayUnion([menuItemId])
+        });
+      } else {
+        users.doc(userId).update({
+          'likes': FieldValue.arrayRemove([menuItemId])
+        });
+      }
+    } catch (e) {
+      throw CouldNotUpdateCartException();
     }
   }
 
